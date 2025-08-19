@@ -1,0 +1,44 @@
+# Django
+*.log
+*.pot
+*.pyc
+__pycache__/
+db.sqlite3
+media/
+staticfiles/
+
+# محیط‌های مجازی
+.env
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# تنظیمات شخصی IDEها
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# فایل‌های تست و پوشش کد
+.coverage
+.tox/
+.pytest_cache/
+htmlcov/
+
+# فایل‌های بسته‌بندی و نصب
+build/
+dist/
+*.egg-info/
+*.egg
+*.whl
+pip-log.txt
+
+# Jupyter
+.ipynb_checkpoints/
+
+# فایل‌های خاص سیستم‌عامل
+.DS_Store
+Thumbs.db
