@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand btn btn-warning text-dark fw-bold me-3" href="{% url 'home:home' %}">فروشگاه</a>
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home:home' %}">خانه</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if request.resolver_match.url_name == 'products' %}active{% endif %}" href="">محصولات</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link {% if '/category/' in request.path %}active{% endif %}" href="#">دسته‌بندی‌ها</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="#">تماس با ما</a>
+      </li>
+    </ul>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"><span class="navbar-toggler-icon"></span></button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
+      <ul class="navbar-nav mb-2 mb-lg-0">
+        {% comment %} {% if user.is_authenticated %}
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">{{ user.full_name }}</a>
+            <ul class="dropdown-menu dropdown-menu-end text-end">
+              <li>
+                <a class="dropdown-item" href="#">پروفایل من</a>
+              </li>
+              <li>
+                <hr class="dropdown-divider" />
+              </li>
+              <li>
+                <a class="dropdown-item" href="{% url 'accounts:logout' %}">خروج</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-info {% if request.resolver_match.url_name == 'cart' %}active{% endif %}" href="{% url 'orders:cart' %}">
+              سبد خرید
+              <span class="badge rounded-pill bg-danger">{{ cart|length }}</span>
+            </a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'accounts:register' %}">ثبت نام</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'accounts:login' %}">ورود</a>
+          </li>
+        {% endif %} {% endcomment %}
+      </ul>
+    </div>
+  </div>
+</nav>
