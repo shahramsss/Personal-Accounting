@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<h3 class="mb-4">لیست حساب‌ها</h3>
+<a href="{% url 'home:accountregister' %}" class="btn btn-success mb-2">حساب جدید</a>
+<!-- 🔍 فرم جستجو -->
+<form method="get" class="mb-4" dir="ltr">
+    <div class="input-group">
+        <button type="submit" class="btn btn-success">جستجو</button>
+        <input dir="rtl" type="text" name="q" class="form-control" placeholder="جستجو بر اساس نام یا ایمیل..."
+            value="{{ request.GET.q }}">
+    </div>
+</form>
+
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table">
+        <tr>
+            <th>#</th>
+            <th>نام کامل</th>
+            <th>ایمیل</th>
+            <th>شماره تلفن</th>
+            <th>آدرس</th>
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for account in accounts %}
+        <tr>
+            <td>{{ account.id }}</td>
+            <td>{{ account.full_name }}</td>
+            <td>{{ account.email|default:"-" }}</td>
+            <td>{{ account.phone_number|default:"-" }}</td>
+            <td>{{ account.address|default:"-" }}</td>
+            <td>
+                <a href="" class="btn btn-sm btn-outline-primary">جزئیات</a>
+                <a href="" class="btn btn-sm btn-outline-secondary">ویرایش</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="6" class="text-center text-muted">هیچ حسابی ثبت نشده است.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+{% endblock content %}home
