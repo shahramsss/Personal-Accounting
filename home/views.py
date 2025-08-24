@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect , get_object_or_404
 from django.views import View
 from .models import Account, Transaction
 from .forms import AccountForm , SearchForm
@@ -49,3 +49,12 @@ class AccountRegisterView(View):
         return render(request, "home/account_register.html", {"form": form})
 
 
+class DeleteAccountView(View):
+    def get(self, request, pk):
+        account = get_object_or_404(Account, pk=pk)
+        return render(request, "home/delete_confirm.html", {"account": account})
+
+    def post(self, request, pk):
+        account = get_object_or_404(Account, pk=pk)
+        account.delete()
+        return redirect("home:accounts")  
