@@ -3,10 +3,10 @@
 
 {% block content %}
 
-<h3 class="mb-4">لیست حساب‌ها</h3>
+<h3 class="my-3">لیست حساب‌ها</h3>
 <a href="{% url 'home:accountregister' %}" class="btn btn-success mb-2">حساب جدید</a>
 <!-- 🔍 فرم جستجو -->
-<form method="get" class="mb-4" dir="ltr">
+<form method="get" class="mb-4" dir="ltr" action="{% url 'home:search' %}">
     <div class="input-group">
         <button type="submit" class="btn btn-success">جستجو</button>
         <input dir="rtl" type="text" name="q" class="form-control" placeholder="جستجو بر اساس نام یا ایمیل..."
@@ -45,6 +45,57 @@
         {% endfor %}
     </tbody>
 </table>
+{% comment %} <div class="pagination">
+    {% if accounts.has_previous %}
+        <a href="?q={{ query }}&page={{ accounts.previous_page_number }}">قبلی</a>
+    {% endif %}
+
+    <span>صفحه {{ accounts.number }} از {{ accounts.paginator.num_pages }}</span>
+
+    {% if accounts.has_next %}
+        <a href="?q={{ query }}&page={{ accounts.next_page_number }}">بعدی</a>
+    {% endif %}
+</div> {% endcomment %}
+<div class="container mt-4">
+    <nav aria-label="صفحه‌بندی">
+        <ul class="pagination justify-content-center">
+
+            {% if accounts.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}&page={{ accounts.previous_page_number }}" aria-label="قبلی">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="visually-hidden">قبلی</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&laquo;</span>
+                </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">
+                    صفحه {{ accounts.number }} از {{ accounts.paginator.num_pages }}
+                </span>
+            </li>
+
+            {% if accounts.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}&page={{ accounts.next_page_number }}" aria-label="بعدی">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="visually-hidden">بعدی</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">&raquo;</span>
+                </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+</div>
+
 
 
 {% endblock content %}home

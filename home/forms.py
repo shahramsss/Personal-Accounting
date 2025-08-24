@@ -30,3 +30,5 @@ class AccountForm(forms.ModelForm):
                 'rows': 1
             }),
         }
+class SearchForm(forms.Form):
+    query = forms.CharField(label='جست‌وجو',)

@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from .models import Account, Transaction
-from .forms import AccountForm
-
+from .forms import AccountForm , SearchForm
+from django.contrib import messages
+from django.db.models import Q
+from django.core.paginator import Paginator
 
 class HomeView(View):
     def get(self, request):
@@ -14,7 +16,7 @@ class HomeView(View):
 
 class AccountsView(View):
     def get(self, request):
-        accounts = Account.objects.all()
+        accounts = Account.objects.all().order_by("-id")
         return render(request, "home/accounts.html", {"accounts": accounts})
 
 
@@ -24,4 +26,31 @@ class AccountRegisterView(View):
     def get(self, request):
         form = self.form_class
         return render(request, "home/account_register.html", {"form": form})
-    
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "حساب جدید ثبت شد.", "success")
+            return redirect("home:accounts")
+        return render(request, "home/account_register.html", {"form": form})
+
+
+
+class SearchAccountsView(View):
+    def get(self, request):
+        query = request.GET.get("q", "")
+        accounts = Account.objects.all().order_by("-id")
+
+        if query:
+            accounts = accounts.filter(
+                Q(full_name__icontains=query) |
+                Q(address__icontains=query) |
+                Q(email__icontains=query) |
+                Q(phone_number__icontains=query)
+            ).order_by("-id")
+        paginator = Paginator(accounts, 2)  # نمایش ۱۰ حساب در هر صفحه
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, "home/accounts.html", {'accounts': page_obj})
