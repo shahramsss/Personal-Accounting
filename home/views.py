@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect , get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Account, Transaction
-from .forms import AccountForm , SearchForm
+from .forms import AccountForm, SearchForm
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
+
 
 class HomeView(View):
     def get(self, request):
@@ -21,16 +22,16 @@ class AccountsView(View):
 
         if query:
             accounts = accounts.filter(
-                Q(full_name__icontains=query) |
-                Q(address__icontains=query) |
-                Q(email__icontains=query) |
-                Q(phone_number__icontains=query)
+                Q(full_name__icontains=query)
+                | Q(address__icontains=query)
+                | Q(email__icontains=query)
+                | Q(phone_number__icontains=query)
             ).order_by("-id")
         paginator = Paginator(accounts, 20)  # نمایش ۱۰ حساب در هر صفحه
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
 
-        return render(request, "home/accounts.html", {'accounts': page_obj})
+        return render(request, "home/accounts.html", {"accounts": page_obj})
 
 
 class AccountRegisterView(View):
@@ -57,4 +58,23 @@ class DeleteAccountView(View):
     def post(self, request, pk):
         account = get_object_or_404(Account, pk=pk)
         account.delete()
-        return redirect("home:accounts")  
+        return redirect("home:accounts")
+
+
+class EditAccountView(View):
+    def get(self, request, pk):
+        account = get_object_or_404(Account, pk=pk)
+        form = AccountForm(instance=account)
+        return render(
+            request, "home/edit_account.html", {"form": form, "account": account}
+        )
+
+    def post(self, request, pk):
+        account = get_object_or_404(Account, pk=pk)
+        form = AccountForm(request.POST, instance=account)
+        if form.is_valid():
+            form.save()
+            messages.warning(request, "حساب با موفقیت ویرایش شد.", "warning")
+            return redirect("home:accounts") 
+         # یا هر صفحه‌ای که لیست حساب‌ها رو نشون می‌ده
+        return render(request, "home/edit_account.html", {"form": form, "account": account})

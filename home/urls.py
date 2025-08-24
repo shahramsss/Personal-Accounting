@@ -24,4 +24,5 @@ urlpatterns = [
     path("accounts/", views.AccountsView.as_view(), name="accounts"),
     path("accountregister/", views.AccountRegisterView.as_view(), name="accountregister"),
     path("deleteaccount/<int:pk>/", views.DeleteAccountView.as_view(), name="deleteaccount"),
+    path("editaccount/<int:pk>/", views.EditAccountView.as_view(), name="editaccount"),
 ]
