@@ -16,8 +16,21 @@ class HomeView(View):
 
 class AccountsView(View):
     def get(self, request):
+        query = request.GET.get("q", "")
         accounts = Account.objects.all().order_by("-id")
-        return render(request, "home/accounts.html", {"accounts": accounts})
+
+        if query:
+            accounts = accounts.filter(
+                Q(full_name__icontains=query) |
+                Q(address__icontains=query) |
+                Q(email__icontains=query) |
+                Q(phone_number__icontains=query)
+            ).order_by("-id")
+        paginator = Paginator(accounts, 20)  # نمایش ۱۰ حساب در هر صفحه
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        return render(request, "home/accounts.html", {'accounts': page_obj})
 
 
 class AccountRegisterView(View):
@@ -36,21 +49,3 @@ class AccountRegisterView(View):
         return render(request, "home/account_register.html", {"form": form})
 
 
-
-class SearchAccountsView(View):
-    def get(self, request):
-        query = request.GET.get("q", "")
-        accounts = Account.objects.all().order_by("-id")
-
-        if query:
-            accounts = accounts.filter(
-                Q(full_name__icontains=query) |
-                Q(address__icontains=query) |
-                Q(email__icontains=query) |
-                Q(phone_number__icontains=query)
-            ).order_by("-id")
-        paginator = Paginator(accounts, 2)  # نمایش ۱۰ حساب در هر صفحه
-        page_number = request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-
-        return render(request, "home/accounts.html", {'accounts': page_obj})

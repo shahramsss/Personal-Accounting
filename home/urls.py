@@ -23,5 +23,4 @@ urlpatterns = [
     path("home/", views.HomeView.as_view(), name="home"),
     path("accounts/", views.AccountsView.as_view(), name="accounts"),
     path("accountregister/", views.AccountRegisterView.as_view(), name="accountregister"),
-    path("search/", views.SearchAccountsView.as_view(), name="search"),
 ]
