@@ -32,6 +32,7 @@
           <td>{{ account.phone_number|default:'-' }}</td>
           <td>{{ account.address|default:'-' }}</td>
           <td>
+            <a href="{% url 'home:accounttransactions' account.id %}" class="btn btn-sm btn-info">تراکنش ها</a>
             <a href="{% url 'home:editaccount' account.id %}" class="btn btn-sm btn-warning">ویرایش</a>
             <a href="{% url 'home:deleteaccount' account.id %}" class="btn btn-sm btn-danger">حذف</a>
           </td>

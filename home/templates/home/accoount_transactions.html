@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+{% load jalali_filters %}
+{% load fa_numbers %}
+
+{% block content %}
+
+<h3 class="my-3">📊 لیست تراکنش‌های جناب:</h3>
+<button class="btn btn-success">درآمد</button>
+<button class="btn btn-warning">هزینه</button>
+<h3>{{account.full_name}}</h3>
+{% if transactions %}
+<table class="table table-bordered table-striped table_hovere fs-5">
+  <thead class="table-dark">
+    <tr>
+      <th>حساب</th>
+      <th>نوع</th>
+      <th>مبلغ</th>
+      <th>تاریخ</th>
+      <th>دسته‌بندی</th>
+      <th>توضیحات</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for transaction in transactions %}
+    <tr>
+      <td>{{ transaction.account.full_name }}</td>
+      <td class="{% if transaction.type == 'RE' %}
+            text-dark
+            {% else %}
+            text-danger
+            {% endif %}">{{ transaction.get_type_display }}</td>
+      <td class="{% if transaction.type == 'RE' %}
+            text-dark
+            {% else %}
+            text-danger
+            {% endif %}">
+        {{ transaction.amount |intcomma|fa_digits }}
+        {% if transaction.type == 'RE' %}
+        +
+        {% else %}
+        -
+        {% endif %}
+      </td>
+      <td>{{ transaction.date |jalali |fa_digits}}</td>
+      <td>{{ transaction.category }}</td>
+      <td>{{ transaction.description|default:'-' }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="6" class="text-center">هیچ تراکنشی ثبت نشده است.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+
+<h2 class="text-center mb-4">تراکنشی وجود ندارد!</h2>
+{% endif %}
+{% endblock %}

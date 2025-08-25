@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Account, Transaction
-from .forms import AccountForm, TransactionForm 
+from .forms import AccountForm, TransactionForm
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class HomeView(View):
@@ -104,11 +105,41 @@ class TransactionsView(View):
         return render(request, "home/transactions.html", {"transactions": transactions})
 
 
-class RegisterTransactionsView(View):
+class AccountTransactionsView(View):
+    def get(self, request, account_pk):
+        account = get_object_or_404(Account, id=account_pk)
+        transactions = account.transactions.all()
+        return render(
+            request,
+            "home/accoount_transactions.html",
+            {"transactions": transactions, "account": account},
+        )
+
+
+class RegisterTransactionsView(LoginRequiredMixin, View):
     form_class = TransactionForm
-    def get(self , request):
+
+    def get(self, request):
         form = self.form_class
-        return render(request ,'home/register_transaction.html',{'form':form})
+        return render(request, "home/register_transaction.html", {"form": form})
+
+    def psot(self, request, account_pk, transaction_type):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            transaction = form.save(commit=False)
+            account = get_object_or_404(Account, id=account_pk)
+            transaction.user = request.user
+            transaction.account = account
+            if transaction_type == "re":
+                transaction.type = "RE"
+            elif transaction_type == "ex":
+                transaction.type = "EX"
+            else:
+                messages.warning(request, "نوع تراکنش مشخص نیست!", "warning")
+                return redirect("home:transactions")
+            messages.success(request, "تراکنش با موفقیت ثب شد.", "success")
+            transaction.save()
+            return redirect("home:transactions")
 
 
 class RetrieveTransactionsView(View):

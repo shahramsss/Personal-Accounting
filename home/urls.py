@@ -28,5 +28,6 @@ urlpatterns = [
     path("account/<int:pk>/", views.SelectAccountView.as_view(), name="account"),
     # transaction
     path("transactions/", views.TransactionsView.as_view(), name="transactions"),
-    path("regitertransaction/", views.RegisterTransactionsView.as_view(), name="regitertransaction"),
+    path("accounttransactions/<int:account_pk>/", views.AccountTransactionsView.as_view(), name="accounttransactions"),
+    path("regitertransaction/<int:account_pk>/<str:transaction_type>", views.RegisterTransactionsView.as_view(), name="regitertransaction"),
 ]
