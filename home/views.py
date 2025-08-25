@@ -89,5 +89,16 @@ class SelectAccountView(View):
         account = get_object_or_404(Account, id=pk)
         form = self.form_class
         return render(
-            request, "home/select_account.html", {"form": form, "account": account,}
+            request,
+            "home/select_account.html",
+            {
+                "form": form,
+                "account": account,
+            },
         )
+
+
+class TransactionsView(View):
+    def get(self, request):
+        transactions = Transaction.objects.all()
+        return render(request, "home/transactions.html", {"transactions": transactions})

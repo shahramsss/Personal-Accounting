@@ -3,7 +3,7 @@
 
 {% block content %}
   <div class="container mt-5">
-    <h4 class="text-danger">آیا مطمئن هستید که می‌خواهید حساب "{{ account.full_name }}" را حذف کنید؟</h4>
+    <h4>آیا مطمئن هستید که می‌خواهید حساب <span class="text-danger">"{{ account.full_name }}"</span>را حذف کنید؟</h4>
     <form method="post">
       {% csrf_token %}
       <button type="submit" class="btn btn-danger">حذف</button>

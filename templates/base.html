@@ -6,8 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>حسابداری شخصی</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" /> 
+<style>
+  @font-face {
+      font-family: "byekan";
+      src: url({% static "fonts/yekan.ttf"%});
+    } 
+    @font-face {
+      font-family: "byekan2";
+      src: url({% static "fonts/byekan2.TTF"%});
+    } 
+    @font-face {
+      font-family: "sans";
+      src: url({% static "fonts/iraniansans.ttf"%});
+    }
+</style>
+    
   </head>
-  <body>
+  <body style="font-family: byekan2">
     {% include 'inc/navbar.html' %}
 
     <div class="container">

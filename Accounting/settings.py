@@ -40,6 +40,9 @@ INSTALLED_APPS = [
     # local apps
     "account",
     "home",
+    # third apps
+    'django.contrib.humanize',
+    
 ]
 
 MIDDLEWARE = [
