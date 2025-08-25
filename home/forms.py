@@ -1,5 +1,5 @@
 from django import forms
-from .models import Account
+from .models import Account, Transaction
 
 class AccountForm(forms.ModelForm):
     class Meta:
@@ -32,3 +32,9 @@ class AccountForm(forms.ModelForm):
         }
 class SearchForm(forms.Form):
     query = forms.CharField(label='جست‌وجو',)
+
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['type', 'amount', 'category', 'description', 'date']  # account را حذف کن

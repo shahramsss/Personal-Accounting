@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Account, Transaction
-from .forms import AccountForm, SearchForm
+from .forms import AccountForm, TransactionForm
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
@@ -75,6 +75,19 @@ class EditAccountView(View):
         if form.is_valid():
             form.save()
             messages.warning(request, "حساب با موفقیت ویرایش شد.", "warning")
-            return redirect("home:accounts") 
-         # یا هر صفحه‌ای که لیست حساب‌ها رو نشون می‌ده
-        return render(request, "home/edit_account.html", {"form": form, "account": account})
+            return redirect("home:accounts")
+        # یا هر صفحه‌ای که لیست حساب‌ها رو نشون می‌ده
+        return render(
+            request, "home/edit_account.html", {"form": form, "account": account}
+        )
+
+
+class SelectAccountView(View):
+    form_class = TransactionForm
+
+    def get(self, request, pk):
+        account = get_object_or_404(Account, id=pk)
+        form = self.form_class
+        return render(
+            request, "home/select_account.html", {"form": form, "account": account,}
+        )

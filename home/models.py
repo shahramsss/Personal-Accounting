@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth import get_user_model
 
 class Account(models.Model):
     full_name = models.CharField(max_length=128)
@@ -19,8 +19,9 @@ class Transaction(models.Model):
         ("EX", "هزینه"),
     ]
 
+    user = models.ForeignKey(get_user_model() , on_delete=models.DO_NOTHING, related_name="transactions")
     account = models.ForeignKey(
-        "Account", on_delete=models.CASCADE, related_name="transactions"
+        "Account", on_delete=models.DO_NOTHING, related_name="transactions"
     )
     type = models.CharField(max_length=2, choices=TRANSACTION_TYPES)
     amount = models.DecimalField(max_digits=15, decimal_places=2)
