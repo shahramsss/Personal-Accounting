@@ -28,4 +28,5 @@ urlpatterns = [
     path("account/<int:pk>/", views.SelectAccountView.as_view(), name="account"),
     # transaction
     path("transactions/", views.TransactionsView.as_view(), name="transactions"),
+    path("regitertransaction/", views.RegisterTransactionsView.as_view(), name="regitertransaction"),
 ]

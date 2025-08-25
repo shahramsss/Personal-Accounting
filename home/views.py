@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Account, Transaction
-from .forms import AccountForm, TransactionForm
+from .forms import AccountForm, TransactionForm 
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
@@ -102,3 +102,22 @@ class TransactionsView(View):
     def get(self, request):
         transactions = Transaction.objects.all()
         return render(request, "home/transactions.html", {"transactions": transactions})
+
+
+class RegisterTransactionsView(View):
+    form_class = TransactionForm
+    def get(self , request):
+        form = self.form_class
+        return render(request ,'home/register_transaction.html',{'form':form})
+
+
+class RetrieveTransactionsView(View):
+    pass
+
+
+class DeleteTransactionsView(View):
+    pass
+
+
+class UpdateTransactionsView(View):
+    pass

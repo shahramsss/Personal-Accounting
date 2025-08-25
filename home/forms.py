@@ -30,11 +30,41 @@ class AccountForm(forms.ModelForm):
                 'rows': 1
             }),
         }
-class SearchForm(forms.Form):
-    query = forms.CharField(label='جست‌وجو',)
 
+
+
+from django import forms
+from .models import Transaction
 
 class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
-        fields = ['type', 'amount', 'category', 'description', 'date']  # account را حذف کن
+        fields = ['amount', 'type', 'date', 'description']
+        labels = {
+            'amount': 'مبلغ',
+            'type': 'نوع تراکنش',
+            'date': 'تاریخ',
+            'description': 'توضیحات',
+        }
+        widgets = {
+            'amount': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'مبلغ را وارد کنید',
+                'dir': 'rtl'
+            }),
+            'type': forms.Select(attrs={
+                'class': 'form-select',
+                'dir': 'rtl'
+            }),
+            'date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date',
+                'dir': 'rtl'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 3,
+                'placeholder': 'توضیحات تراکنش',
+                'dir': 'rtl'
+            }),
+        }
