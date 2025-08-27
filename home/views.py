@@ -116,12 +116,28 @@ class AccountTransactionsView(View):
         )
 
 
-class RegisterTransactionsView(LoginRequiredMixin, View):
+class RegisterTransactionsView(View):
     form_class = TransactionForm
 
-    def get(self, request):
+    def get(self, request, account_pk, transaction_type):
         form = self.form_class
-        return render(request, "home/register_transaction.html", {"form": form})
+        account = get_object_or_404(Account, pk=account_pk)
+        print(account.full_name)
+        if transaction_type == "re":
+            transaction_type = "درآمد"
+
+        if transaction_type == "ex":
+            transaction_type = "هزینه"
+
+        return render(
+            request,    
+            "home/register_transaction.html",
+            {
+                "form": form,
+                "account": account,
+                "transaction_type": transaction_type,
+            },
+        )
 
     def psot(self, request, account_pk, transaction_type):
         form = self.form_class(request.POST)

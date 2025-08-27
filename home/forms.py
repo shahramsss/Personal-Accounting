@@ -1,5 +1,6 @@
 from django import forms
 from .models import Account, Transaction
+from django.utils import timezone
 
 class AccountForm(forms.ModelForm):
     class Meta:
@@ -33,10 +34,12 @@ class AccountForm(forms.ModelForm):
 
 
 
-from django import forms
-from .models import Transaction
+
 
 class TransactionForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date'].initial = timezone.now().date()
     class Meta:
         model = Transaction
         fields = ['amount', 'type', 'date', 'description']
@@ -46,6 +49,7 @@ class TransactionForm(forms.ModelForm):
             'date': 'تاریخ',
             'description': 'توضیحات',
         }
+        exclude = ['type',]
         widgets = {
             'amount': forms.NumberInput(attrs={
                 'class': 'form-control',
