@@ -108,7 +108,7 @@ class TransactionsView(View):
 class AccountTransactionsView(View):
     def get(self, request, account_pk):
         account = get_object_or_404(Account, id=account_pk)
-        transactions = account.transactions.all()
+        transactions = account.transactions.all().order_by("-created_at")
         return render(
             request,
             "home/accoount_transactions.html",
@@ -120,7 +120,7 @@ class RegisterTransactionsView(View):
     form_class = TransactionForm
 
     def get(self, request, account_pk, transaction_type):
-        form = self.form_class
+        form = self.form_class()
         account = get_object_or_404(Account, pk=account_pk)
         print(account.full_name)
         if transaction_type == "re":
@@ -139,7 +139,7 @@ class RegisterTransactionsView(View):
             },
         )
 
-    def psot(self, request, account_pk, transaction_type):
+    def post(self, request, account_pk, transaction_type):
         form = self.form_class(request.POST)
         if form.is_valid():
             transaction = form.save(commit=False)
@@ -155,7 +155,7 @@ class RegisterTransactionsView(View):
                 return redirect("home:transactions")
             messages.success(request, "تراکنش با موفقیت ثب شد.", "success")
             transaction.save()
-            return redirect("home:transactions")
+            return redirect("home:accounttransactions", account.id)
 
 
 class RetrieveTransactionsView(View):

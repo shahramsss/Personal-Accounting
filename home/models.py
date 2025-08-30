@@ -27,7 +27,7 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=15, decimal_places=2)
     category = models.CharField(max_length=100)  # منبع درآمد یا دسته‌بندی هزینه
     description = models.TextField(blank=True, null=True)
-    date = models.DateField()
+    date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
