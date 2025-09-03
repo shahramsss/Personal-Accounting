@@ -77,8 +77,12 @@
         {% endfor %}
         <tr class="table-primary">
           <td colspan="2" class="text-end fw-bold">مانده حساب</td>
-          <td class="">{{ summary|intcomma|fa_digits }} تومان</td>
-          <td colspan="3" class="text-end fw-bold"></td>
+          {% if summary < 0 %}
+          <td  colspan="4" dir="ltr" class="text-end text-danger"> {{ summary|intcomma|fa_digits }} </td>
+          {%else %}
+          <td  colspan="4" dir="ltr" class="text-end text-dark"> {{ summary|intcomma|fa_digits }} </td>
+
+          {% endif %}
         </tr>
       </tbody>
     </table>

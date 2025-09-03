@@ -119,7 +119,8 @@ class AccountTransactionsView(LoginRequiredMixin, View):
         if summary["total_expense"]== None:
             summary["total_expense"]=0
         summary = summary["total_income"] - summary["total_expense"]
-
+        if summary<0 :
+            summary = summary
         return render(
             request,
             "home/accoount_transactions.html",
