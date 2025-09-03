@@ -122,7 +122,7 @@ class AccountTransactionsView(LoginRequiredMixin, View):
         if summary<0 :
             summary = summary
 
-        paginator = Paginator(transactions, 2)  # ۲۰ تراکنش در هر صفحه
+        paginator = Paginator(transactions, 20)  # ۲۰ تراکنش در هر صفحه
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
         return render(

@@ -78,9 +78,11 @@
         <tr class="table-info">
           <td colspan="2" class="text-end fw-bold">مانده حساب</td>
           {% if summary < 0 %}
-          <td  colspan="4" dir="ltr" class="text-end text-danger"> {{ summary|intcomma|fa_digits }} </td>
+          <td  colspan="3" dir="ltr" class="text-end text-danger"> {{ summary|intcomma|fa_digits }} </td>
+          <td class="text-end text-danger fw-bold">بدهکار</td>
           {%else %}
-          <td  colspan="4" dir="ltr" class="text-end text-dark"> {{ summary|intcomma|fa_digits }} </td>
+          <td  colspan="3" dir="ltr" class="text-end text-dark"> {{ summary|intcomma|fa_digits }} </td>
+          <td class="text-end fw-bold">طلب کار</td>
 
           {% endif %}
         </tr>
