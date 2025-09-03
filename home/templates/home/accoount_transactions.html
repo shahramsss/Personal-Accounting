@@ -91,25 +91,31 @@
 
     {% if transactions.has_previous %}
       <li class="page-item">
-        <a class="page-link" href="?page={{ transactions.previous_page_number }}">قبلی</a>
+        <a class="page-link" href="?q={{ query }}&page={{ transactions.previous_page_number }}" aria-label="قبلی">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="visually-hidden">قبلی</span>
+        </a>
       </li>
     {% else %}
       <li class="page-item disabled">
-        <span class="page-link">قبلی</span>
+        <span class="page-link">&laquo;</span>
       </li>
     {% endif %}
 
     <li class="page-item active">
-      <span class="page-link">{{ transactions.number }}</span>
+      <span class="page-link">صفحه {{ transactions.number }} از {{ transactions.paginator.num_pages }}</span>
     </li>
 
     {% if transactions.has_next %}
       <li class="page-item">
-        <a class="page-link" href="?page={{ transactions.next_page_number }}">بعدی</a>
+        <a class="page-link" href="?q={{ query }}&page={{ transactions.next_page_number }}" aria-label="بعدی">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="visually-hidden">بعدی</span>
+        </a>
       </li>
     {% else %}
       <li class="page-item disabled">
-        <span class="page-link">بعدی</span>
+        <span class="page-link">&raquo;</span>
       </li>
     {% endif %}
 
