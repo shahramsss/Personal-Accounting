@@ -178,9 +178,15 @@ class RetrieveTransactionsView(View):
     pass
 
 
-class DeleteTransactionsView(View):
-    pass
-
-
+class DeleteTransactionsView(LoginRequiredMixin , View):
+    def get(self , request ,account_pk, pk):
+        account = get_object_or_404(Account, id=account_pk)
+        transaction = get_object_or_404(Transaction , id =pk)
+        if transaction. user == request.user:
+            transaction.delete()
+            messages.success(request ,"تراکنش با موفقیت پاک شد." , "success")
+        else:
+            messages.warning(request ,"این تراکنش مربوط به شما نمی باشد!" , "warning")
+        return redirect("home:accounttransactions", account.id)
 class UpdateTransactionsView(View):
     pass

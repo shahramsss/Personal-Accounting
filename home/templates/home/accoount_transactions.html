@@ -5,8 +5,7 @@
 {% load fa_numbers %}
 
 {% block content %}
-  <h3 class="my-3">📊 لیست تراکنش‌های جناب:</h3>
-  <h3>{{ account.full_name }}</h3>
+  <p class="my-3 h4">📊 لیست تراکنش‌های جناب: <span> {{ account.full_name }}</span></p>
   <a href="{% url 'home:regitertransaction' account.id 're' %}" class="btn btn-success my-3">درآمد</a>
   <a href="{% url 'home:regitertransaction' account.id 'ex' %}" class="btn btn-warning my-3">هزینه</a>
   {% if transactions %}
@@ -17,7 +16,6 @@
           <th>نوع</th>
           <th>مبلغ</th>
           <th>تاریخ</th>
-          <th>دسته‌بندی</th>
           <th>توضیحات</th>
         </tr>
       </thead>
@@ -67,8 +65,11 @@
               {% endif %}
             </td>
             <td>{{ transaction.date|jalali|fa_digits }}</td>
-            <td>{{ transaction.category }}</td>
-            <td>{{ transaction.description|default:'-' }}</td>
+            <td>{{ transaction.description|default:'-' }}</td><td>
+  <a class="btn btn-sm btn-danger" href="{% url 'home:deletetransaction' account.id transaction.id %}">
+    حذف
+  </a>
+</td>
           </tr>
         {% empty %}
           <tr>
@@ -78,14 +79,16 @@
         <tr class="table-info">
           <td colspan="2" class="text-end fw-bold">مانده حساب</td>
           {% if summary < 0 %}
-          <td  colspan="3" dir="ltr" class="text-end text-danger"> {{ summary|intcomma|fa_digits }} </td>
+          <td  colspan="2" dir="ltr" class="text-end text-danger"> {{ summary|intcomma|fa_digits }} </td>
           <td class="text-end text-danger fw-bold">بدهکار</td>
           {%else %}
-          <td  colspan="3" dir="ltr" class="text-end text-dark"> {{ summary|intcomma|fa_digits }} </td>
+          <td  colspan="2" dir="ltr" class="text-end text-dark"> {{ summary|intcomma|fa_digits }} </td>
           <td class="text-end fw-bold">طلب کار</td>
 
           {% endif %}
-        </tr>
+          
+          
+
       </tbody>
     </table> 
     <nav aria-label="صفحه‌بندی">
