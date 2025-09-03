@@ -13,7 +13,7 @@
     <table class="table table-bordered table-striped table_hovere fs-5">
       <thead class="table-dark">
         <tr>
-          <th>حساب</th>
+          <th>#</th>
           <th>نوع</th>
           <th>مبلغ</th>
           <th>تاریخ</th>
@@ -24,23 +24,39 @@
       <tbody>
         {% for transaction in transactions %}
           <tr>
-            <td>{{ transaction.account.full_name }}</td>
+            <td>{{ transaction.id }}</td>
             <td class="{% if transaction.type == 'RE' %}
+                
+                
                 
             text-dark
 
+
+
               {% else %}
                 
+                
+                
             text-danger
+
+
 
               {% endif %}">{{ transaction.get_type_display }}</td>
             <td class="{% if transaction.type == 'RE' %}
                 
+                
+                
             text-dark
+
+
 
               {% else %}
                 
+                
+                
             text-danger
+
+
 
               {% endif %}">
               {{ transaction.amount|intcomma|fa_digits }}
@@ -59,8 +75,14 @@
             <td colspan="6" class="text-center">هیچ تراکنشی ثبت نشده است.</td>
           </tr>
         {% endfor %}
+        <tr class="table-primary">
+          <td colspan="2" class="text-end fw-bold">مانده حساب</td>
+          <td class="">{{ summary|intcomma|fa_digits }} تومان</td>
+          <td colspan="3" class="text-end fw-bold"></td>
+        </tr>
       </tbody>
     </table>
+
   {% else %}
     <h2 class="text-center mb-4">تراکنشی وجود ندارد!</h2>
   {% endif %}

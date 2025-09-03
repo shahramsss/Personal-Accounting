@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Sum
 
 
 class HomeView(View):
@@ -105,14 +106,24 @@ class TransactionsView(View):
         return render(request, "home/transactions.html", {"transactions": transactions})
 
 
-class AccountTransactionsView(View):
+class AccountTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk):
         account = get_object_or_404(Account, id=account_pk)
         transactions = account.transactions.all().order_by("-created_at")
+        summary = transactions.aggregate(
+            total_income=Sum("amount", filter=Q(type="RE")),
+            total_expense=Sum("amount", filter=Q(type="EX")),
+        )
+        if summary["total_income"]== None:
+            summary["total_income"]=0
+        if summary["total_expense"]== None:
+            summary["total_expense"]=0
+        summary = summary["total_income"] - summary["total_expense"]
+
         return render(
             request,
             "home/accoount_transactions.html",
-            {"transactions": transactions, "account": account},
+            {"transactions": transactions, "account": account, "summary": summary},
         )
 
 
@@ -130,7 +141,7 @@ class RegisterTransactionsView(View):
             transaction_type = "هزینه"
 
         return render(
-            request,    
+            request,
             "home/register_transaction.html",
             {
                 "form": form,

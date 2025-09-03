@@ -24,7 +24,7 @@ class Transaction(models.Model):
         "Account", on_delete=models.DO_NOTHING, related_name="transactions"
     )
     type = models.CharField(max_length=2, choices=TRANSACTION_TYPES)
-    amount = models.DecimalField(max_digits=15, decimal_places=2)
+    amount = models.DecimalField(max_digits=15, decimal_places=0)
     category = models.CharField(max_length=100)  # منبع درآمد یا دسته‌بندی هزینه
     description = models.TextField(blank=True, null=True)
     date = models.DateTimeField()
