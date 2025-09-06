@@ -187,7 +187,7 @@ class DeleteTransactionsView(LoginRequiredMixin , View):
     def get(self , request ,account_pk, pk):
         account = get_object_or_404(Account, id=account_pk)
         transaction = get_object_or_404(Transaction , id =pk)
-        if transaction. user == request.user:
+        if transaction.user == request.user and transaction.account == account:
            return render(request ,'home/delete_confirm_transaction.html' ,{'transaction':transaction , 'account':account})
         else:
             messages.warning(request ,"این تراکنش مربوط به شما نمی باشد!" , "warning")
@@ -196,7 +196,7 @@ class DeleteTransactionsView(LoginRequiredMixin , View):
     def post (self , request ,account_pk, pk):
         account = get_object_or_404(Account, id=account_pk)
         transaction = get_object_or_404(Transaction , id =pk)
-        if transaction. user == request.user:
+        if transaction.user == request.user and transaction.account == account:
             transaction.delete()
             messages.success(request ,"تراکنش با موفقیت پاک شد." , "success")
         else:
