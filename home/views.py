@@ -120,7 +120,7 @@ class TransactionsView(View):
             transactions = transactions.filter(description__icontains=query)
 
         transactions = transactions.order_by("-created_at")  # اختیاری
-        paginator = Paginator(transactions, 10)
+        paginator = Paginator(transactions, 20)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
 
