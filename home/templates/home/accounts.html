@@ -25,7 +25,7 @@
     </thead>
     <tbody>
       {% for account in accounts %}
-        <tr>
+        <tr class="clickable-row" data-href="{% url 'home:accounttransactions' account.id %}">
           <td>{{ account.id }}</td>
           <td>{{ account.full_name }}</td>
           <td>{{ account.email|default:'-' }}</td>
@@ -44,6 +44,16 @@
       {% endfor %}
     </tbody>
   </table>
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const rows = document.querySelectorAll(".clickable-row");
+    rows.forEach(row => {
+      row.addEventListener("click", () => {
+        window.location.href = row.dataset.href;
+      });
+    });
+  });
+</script>
 
   <div class="container mt-4">
     <nav aria-label="صفحه‌بندی">
