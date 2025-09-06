@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="w-50">
+    <p class="h4 my-2">ویرایش تراکنش</p>
+    <p class="my-2 h5">نام صاحب حساب: {{ account.full_name }}<p>
+    <p class="h5 my-2"> شماره تراکنش : {{ transaction.id }}</p>
+     {% if  transaction.type == 'RE' %}
+    <p class="my-2">نوع تراکنش:
+      <span class="bg-success text-white p-1 rounded h5">درآمد</span>
+    </p>
+  {% else %}
+    <p class="my-2">نوع تراکنش:
+      <span class="bg-warning text-dark p-1 rounded ">هزینه</span>
+    </p>
+  {% endif %}
+
+    <form action="" method="post" class="my-2">
+      {{ form.as_p }}
+      {% csrf_token %}
+      <button class="btn btn-success" type="submit">ثبت</button>
+      <a href="{% url 'home:accounttransactions' account.id %}" class="btn btn-info">انصراف</a>
+    </form>
+  </div>
+{% endblock %}
