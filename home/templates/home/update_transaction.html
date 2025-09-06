@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="w-50">
+    <p class="h4 my-2">ویرایش تراکنش شماره: {{ transaction.id }}</p>
+    <h4 class="my-3">نام صاحب حساب: {{ account.full_name }}</h4>
+
+    <form action="" method="post" class="my-2">
+      {{ form.as_p }}
+      {% csrf_token %}
+      <button class="btn btn-info" type="submit">ثبت</button>
+      <a href="{% url 'home:accounttransactions' account.id %}" class="btn btn-secondary">انصراف</a>
+    </form>
+  </div>
+{% endblock %}

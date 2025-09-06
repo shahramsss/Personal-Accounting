@@ -67,6 +67,9 @@
             </td>
             <td>{{ transaction.date|jalali|fa_digits }}</td>
             <td>{{ transaction.description|default:'-' }}</td><td>
+  <a class="btn btn-sm btn-warning" href="{% url 'home:updatetransaction' account.id transaction.id %}">
+    ویرایش
+  </a>
   <a class="btn btn-sm btn-danger" href="{% url 'home:deletetransaction' account.id transaction.id %}">
     حذف
   </a>

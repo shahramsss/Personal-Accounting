@@ -114,12 +114,12 @@ class AccountTransactionsView(LoginRequiredMixin, View):
             total_income=Sum("amount", filter=Q(type="RE")),
             total_expense=Sum("amount", filter=Q(type="EX")),
         )
-        if summary["total_income"]== None:
-            summary["total_income"]=0
-        if summary["total_expense"]== None:
-            summary["total_expense"]=0
+        if summary["total_income"] == None:
+            summary["total_income"] = 0
+        if summary["total_expense"] == None:
+            summary["total_expense"] = 0
         summary = summary["total_income"] - summary["total_expense"]
-        if summary<0 :
+        if summary < 0:
             summary = summary
 
         paginator = Paginator(transactions, 20)  # ۲۰ تراکنش در هر صفحه
@@ -177,34 +177,57 @@ class RegisterTransactionsView(View):
 class RetrieveTransactionsView(View):
     pass
 
-# class DeleteTransactionConfirmView(View):
-#     self 
-#     def get(self , request ,account_pk, pk):
-#         return render(request ,,form)
 
-
-class DeleteTransactionsView(LoginRequiredMixin , View):
-    def get(self , request ,account_pk, pk):
+class DeleteTransactionsView(LoginRequiredMixin, View):
+    def get(self, request, account_pk, pk):
         account = get_object_or_404(Account, id=account_pk)
-        transaction = get_object_or_404(Transaction , id =pk)
+        transaction = get_object_or_404(Transaction, id=pk)
         if transaction.user == request.user and transaction.account == account:
-           return render(request ,'home/delete_confirm_transaction.html' ,{'transaction':transaction , 'account':account})
+            return render(
+                request,
+                "home/delete_confirm_transaction.html",
+                {"transaction": transaction, "account": account},
+            )
         else:
-            messages.warning(request ,"این تراکنش مربوط به شما نمی باشد!" , "warning")
+            messages.warning(request, "این تراکنش مربوط به شما نمی باشد!", "warning")
         return redirect("home:accounttransactions", account.id)
-    
-    def post (self , request ,account_pk, pk):
+
+    def post(self, request, account_pk, pk):
         account = get_object_or_404(Account, id=account_pk)
-        transaction = get_object_or_404(Transaction , id =pk)
+        transaction = get_object_or_404(Transaction, id=pk)
         if transaction.user == request.user and transaction.account == account:
             transaction.delete()
-            messages.success(request ,"تراکنش با موفقیت پاک شد." , "success")
+            messages.success(request, "تراکنش با موفقیت حذف شد.", "success")
         else:
-            messages.warning(request ,"این تراکنش مربوط به شما نمی باشد!" , "warning")
+            messages.warning(request, "این تراکنش مربوط به شما نمی باشد!", "warning")
         return redirect("home:accounttransactions", account.id)
-    
-
 
 
 class UpdateTransactionsView(View):
-    pass
+    form_class = TransactionForm
+
+    def get(self, request, account_pk, pk):
+        account = get_object_or_404(Account, id=account_pk)
+        transaction = get_object_or_404(Transaction, id=pk)
+        form = self.form_class(instance=transaction)
+        if transaction.user == request.user and transaction.account == account:
+            return render(
+                request,
+                "home/update_transaction.html",
+                {"transaction": transaction, "account": account, "form": form},
+            )
+        else:
+            messages.warning(request, "این تراکنش مربوط به شما نمی باشد!", "warning")
+        return redirect("home:accounttransactions", account.id)
+
+    def post(self, request, account_pk, pk):
+        account = get_object_or_404(Account, id=account_pk)
+        transaction = get_object_or_404(Transaction, id=pk)
+        form = self.form_class( request.POST , instance=transaction )
+        if transaction.user == request.user and transaction.account == account and form.is_valid():
+            form.save()
+            messages.success(request, "تراکنش با موفقیت ویرایش شد.", "success")
+            return redirect("home:accounttransactions", account.id)
+        else:
+            messages.warning(request, "این تراکنش مربوط به شما نمی باشد!", "warning")
+        return redirect("home:accounttransactions", account.id)
