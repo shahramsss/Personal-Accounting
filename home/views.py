@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Account, Transaction
-from .forms import AccountForm, TransactionForm
+from .forms import AccountForm, TransactionForm , SignUpForm
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
+from django.contrib.auth import login
 
 
 class HomeView(View):
@@ -259,3 +260,18 @@ class UpdateTransactionsView(View):
         else:
             messages.warning(request, "این تراکنش مربوط به شما نمی باشد!", "warning")
         return redirect("home:accounttransactions", account.id)
+
+
+
+class SignupView(View):
+    form_class = SignUpForm
+    def post(self , request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request , "شما با موفیت وارد شدید.", 'success')
+            return redirect('home:home') 
+    def get(self , request):
+        form = self.form_class
+        return render(request, 'home/signup_user.html', {'form': form})

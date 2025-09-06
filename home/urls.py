@@ -17,6 +17,8 @@ Including another URLconf
 
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
+
 
 app_name = "home"
 urlpatterns = [
@@ -26,10 +28,17 @@ urlpatterns = [
     path("deleteaccount/<int:pk>/", views.DeleteAccountView.as_view(), name="deleteaccount"),
     path("editaccount/<int:pk>/", views.EditAccountView.as_view(), name="editaccount"),
     path("account/<int:pk>/", views.SelectAccountView.as_view(), name="account"),
+    # django user
+    path('signup/', views.SignupView.as_view(), name='signup'),
+    path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    
     # transaction
     path("transactions/", views.TransactionsView.as_view(), name="transactions"),
     path("accounttransactions/<int:account_pk>/", views.AccountTransactionsView.as_view(), name="accounttransactions"),
     path("registertransaction/<int:account_pk>/<str:transaction_type>/", views.RegisterTransactionsView.as_view(), name="registertransaction"),
     path("deletetransaction/<int:account_pk>/<int:pk>/", views.DeleteTransactionsView.as_view(), name="deletetransaction"),
     path("updatetransaction/<int:account_pk>/<int:pk>/", views.UpdateTransactionsView.as_view(), name="updatetransaction"),
+
+
 ]

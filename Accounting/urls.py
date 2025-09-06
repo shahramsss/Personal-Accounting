@@ -22,6 +22,8 @@ from django.conf.urls.static import static
 from django.conf.urls import handler404
 from django.shortcuts import render
 
+
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("home.urls")),
