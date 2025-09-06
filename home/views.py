@@ -55,6 +55,17 @@ class AccountRegisterView(View):
 class DeleteAccountView(View):
     def get(self, request, pk):
         account = get_object_or_404(Account, pk=pk)
+        transactions = Transaction.objects.filter(account=account)
+        if transactions.exists():
+            messages.warning(
+                request,
+                "باید همه تراکنش های حساب "
+                + account.full_name
+                + " حذف شوند تا امکان حذف وجود داشته باشد!",
+                "warning",
+            )
+            return redirect("home:accounts")
+
         return render(request, "home/delete_confirm.html", {"account": account})
 
     def post(self, request, pk):
@@ -236,8 +247,12 @@ class UpdateTransactionsView(View):
     def post(self, request, account_pk, pk):
         account = get_object_or_404(Account, id=account_pk)
         transaction = get_object_or_404(Transaction, id=pk)
-        form = self.form_class( request.POST , instance=transaction )
-        if transaction.user == request.user and transaction.account == account and form.is_valid():
+        form = self.form_class(request.POST, instance=transaction)
+        if (
+            transaction.user == request.user
+            and transaction.account == account
+            and form.is_valid()
+        ):
             form.save()
             messages.success(request, "تراکنش با موفقیت ویرایش شد.", "success")
             return redirect("home:accounttransactions", account.id)

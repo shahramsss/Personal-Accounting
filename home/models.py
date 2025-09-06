@@ -21,7 +21,7 @@ class Transaction(models.Model):
 
     user = models.ForeignKey(get_user_model() , on_delete=models.DO_NOTHING, related_name="transactions")
     account = models.ForeignKey(
-        "Account", on_delete=models.DO_NOTHING, related_name="transactions"
+        "Account", on_delete=models.PROTECT, related_name="transactions"
     )
     type = models.CharField(max_length=2, choices=TRANSACTION_TYPES)
     amount = models.DecimalField(max_digits=15, decimal_places=0)
@@ -32,7 +32,7 @@ class Transaction(models.Model):
 
     def __str__(self):
         sign = "+" if self.type == "RE" else "-"
-        return f"{sign}{self.amount} تومان - {self.category}"
+        return f"{sign}{self.amount} - {self.category}"
 
 
 # class Product(models.Model):
