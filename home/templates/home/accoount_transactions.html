@@ -6,8 +6,8 @@
 
 {% block content %}
   <p class="my-3 h4">📊 لیست تراکنش‌های جناب: <span> {{ account.full_name }}</span></p>
-  <a href="{% url 'home:regitertransaction' account.id 're' %}" class="btn btn-success my-3">درآمد</a>
-  <a href="{% url 'home:regitertransaction' account.id 'ex' %}" class="btn btn-warning my-3">هزینه</a>
+  <a href="{% url 'home:registertransaction' account.id 're' %}" class="btn btn-success my-3">درآمد</a>
+  <a href="{% url 'home:registertransaction' account.id 'ex' %}" class="btn btn-warning my-3">هزینه</a>
   {% if transactions %}
     <table class="table table-bordered table-striped table_hovere fs-5">
       <thead class="table-dark">
@@ -17,6 +17,7 @@
           <th>مبلغ</th>
           <th>تاریخ</th>
           <th>توضیحات</th>
+          <th>عملیات</th>
         </tr>
       </thead>
       <tbody>
@@ -83,7 +84,7 @@
           <td class="text-end text-danger fw-bold">بدهکار</td>
           {%else %}
           <td  colspan="2" dir="ltr" class="text-end text-dark"> {{ summary|intcomma|fa_digits }} </td>
-          <td class="text-end fw-bold">طلب کار</td>
+          <td colspan="2" class="text-end fw-bold">طلب کار</td>
 
           {% endif %}
           

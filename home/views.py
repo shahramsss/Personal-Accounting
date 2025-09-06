@@ -177,9 +177,23 @@ class RegisterTransactionsView(View):
 class RetrieveTransactionsView(View):
     pass
 
+# class DeleteTransactionConfirmView(View):
+#     self 
+#     def get(self , request ,account_pk, pk):
+#         return render(request ,,form)
+
 
 class DeleteTransactionsView(LoginRequiredMixin , View):
     def get(self , request ,account_pk, pk):
+        account = get_object_or_404(Account, id=account_pk)
+        transaction = get_object_or_404(Transaction , id =pk)
+        if transaction. user == request.user:
+           return render(request ,'home/delete_confirm_transaction.html' ,{'transaction':transaction , 'account':account})
+        else:
+            messages.warning(request ,"این تراکنش مربوط به شما نمی باشد!" , "warning")
+        return redirect("home:accounttransactions", account.id)
+    
+    def post (self , request ,account_pk, pk):
         account = get_object_or_404(Account, id=account_pk)
         transaction = get_object_or_404(Transaction , id =pk)
         if transaction. user == request.user:
@@ -188,5 +202,9 @@ class DeleteTransactionsView(LoginRequiredMixin , View):
         else:
             messages.warning(request ,"این تراکنش مربوط به شما نمی باشد!" , "warning")
         return redirect("home:accounttransactions", account.id)
+    
+
+
+
 class UpdateTransactionsView(View):
     pass
