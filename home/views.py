@@ -102,8 +102,21 @@ class SelectAccountView(View):
 
 class TransactionsView(View):
     def get(self, request):
+        query = request.GET.get("q", "")
         transactions = Transaction.objects.all()
-        return render(request, "home/transactions.html", {"transactions": transactions})
+        if query:
+            transactions = transactions.filter(description__icontains=query)
+
+        transactions = transactions.order_by("-created_at")  # اختیاری
+        paginator = Paginator(transactions, 10)
+        page_number = request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            "transactions": page_obj,
+            "query": query,
+        }
+        return render(request, "home/transactions.html", context)
 
 
 class AccountTransactionsView(LoginRequiredMixin, View):
