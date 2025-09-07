@@ -1,14 +1,20 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Account, Transaction
-from .forms import AccountForm, TransactionForm, SignUpForm, LoginForm
+from .forms import (
+    AccountForm,
+    TransactionForm,
+    SignUpForm,
+    LoginForm,
+    ResetPasswordForm,
+)
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
-from django.contrib.auth import login, logout
-from django.contrib.auth import authenticate
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import User
 
 
 class HomeView(View):
@@ -288,7 +294,7 @@ class LoginView(View):
 
     def post(self, request):
         form = self.form_class(request.POST)
-        next_url = request.GET.get('next' , '') or request.POST.get('next','')
+        next_url = request.GET.get("next", "") or request.POST.get("next", "")
         if form.is_valid():
             cd = form.cleaned_data
             username = cd["username"]
@@ -308,3 +314,85 @@ class LogoutView(LoginRequiredMixin, View):
         logout(request)
         messages.success(request, "شما با موفقیت خارج شدید.", "success")
         return redirect("home:home")
+
+
+# class ResetPassword(LoginRequiredMixin, View):
+#     form_class = ResetPasswordForm
+
+#     def get(self, request):
+#         form = self.form_class()
+#         return render(request, "home/reset_password.html", {"form": form})
+
+#     def post(self, request):
+#         form = self.form_class(request.POST)
+#         if form.is_valid():
+#             cd = form.cleaned_data
+#             old_password = cd["old_password"]
+
+
+#             if not request.user.check_password(old_password):
+#                 messages.warning(request, "رمز عبور فعلی اشتباه است!", "warning")
+#                 return redirect("home:resetpassword")
+
+#             if old_password and old_password == request.user.password:
+#                 if len(cd["new_password"]) < 4:
+#                     messages.warning(
+#                         request, "رمز عبور جدید باید حداقل ۴ کاراکتر باشد!", "warning"
+#                     )
+#                     return redirect("home:resetpassword")
+
+#                 if (
+#                     cd["new_password"]
+#                     and cd["confirm_password"]
+#                     and cd["new_password"] != cd["confirm_password"]
+#                 ):
+#                     messages.warning(
+#                         request,
+#                         "رمز عبور و تکرار آن باید با هم یکسان باشند!",
+#                         "warning",
+#                     )
+#                     return redirect("home:resetpassword")
+
+#                 user = User.objects.get(username=request.user.username)
+#                 user.set_password(cd["new_password"])
+#                 user.save()
+#                 messages.success(
+#                     request, "رمز عبور شما با موفقیت تغییر یافت.", "success"
+#                 )
+#                 return redirect("home:home")
+#         return redirect("home:resetpassword")
+
+
+class ResetPassword(LoginRequiredMixin, View):
+    form_class = ResetPasswordForm
+
+    def get(self, request):
+        form = self.form_class()
+        return render(request, "home/reset_password.html", {"form": form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            old_password = cd["old_password"]
+            new_password = cd["new_password"]
+            confirm_password = cd["confirm_password"]
+
+            if not request.user.check_password(old_password):
+                messages.warning(request, "رمز عبور فعلی اشتباه است!", "warning")
+                return redirect("home:resetpassword")
+
+            if len(new_password) < 4:
+                messages.warning(request, "رمز عبور جدید باید حداقل ۴ کاراکتر باشد!", "warning")
+                return redirect("home:resetpassword")
+
+            if new_password != confirm_password:
+                messages.warning(request, "رمز عبور و تکرار آن باید با هم یکسان باشند!", "warning")
+                return redirect("home:resetpassword")
+
+            request.user.set_password(new_password)
+            request.user.save()
+            messages.success(request, "رمز عبور شما با موفقیت تغییر یافت.", "success")
+            return redirect("home:login")
+
+        return render(request, "home/reset_password.html", {"form": form})

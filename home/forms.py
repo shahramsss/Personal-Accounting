@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
+
 class AccountForm(forms.ModelForm):
     class Meta:
         model = Account
@@ -79,24 +80,48 @@ class TransactionForm(forms.ModelForm):
             ),
         }
 
+
 class SignUpForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2']
+        fields = ["username", "password1", "password2"]
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(
-        label='نام کاربری',
+        label="نام کاربری",
         max_length=150,
-        widget=forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'نام کاربری را وارد کنید'
-        })
+        widget=forms.TextInput(
+            attrs={"class": "form-control", "placeholder": "نام کاربری را وارد کنید"}
+        ),
     )
     password = forms.CharField(
-        label='رمز عبور',
-        widget=forms.PasswordInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'رمز عبور را وارد کنید'
-        })
+        label="رمز عبور",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "رمز عبور را وارد کنید"}
+        ),
+    )
+
+
+class ResetPasswordForm(forms.Form):
+    old_password = forms.CharField(
+        label="رمز عبور قبلی",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "رمز عبور قبلی را وارد کنید"}
+        ),
+    )
+    new_password = forms.CharField(
+        label="رمز عبور جدید",
+        widget=forms.PasswordInput(
+            attrs={"class": "form-control", "placeholder": "رمز عبور جدید را وارد کنید"}
+        ),
+    )
+    confirm_password = forms.CharField(
+        label="تکرار رمز عبور جدید",
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "رمز عبور جدید را دوباره وارد کنید",
+            }
+        ),
     )
