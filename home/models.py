@@ -33,7 +33,7 @@ class Transaction(models.Model):
 
     def __str__(self):
         sign = "+" if self.type == "RE" else "-"
-        return f"{sign}{self.amount} - {self.category}"
+        return f"{self.account.user} | {self.account} | {sign}  {self.amount}"
 
 
 # class Product(models.Model):
