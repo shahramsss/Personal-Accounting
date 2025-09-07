@@ -22,18 +22,18 @@ from django.contrib.auth import views as auth_views
 
 app_name = "home"
 urlpatterns = [
+     # django user
+    path('signup/', views.SignupView.as_view(), name='signup'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
+    path('resetpassword/', views.ResetPassword.as_view(), name='resetpassword'),
+    # views
     path("home/", views.HomeView.as_view(), name="home"),
     path("accounts/", views.AccountsView.as_view(), name="accounts"),
     path("accountregister/", views.AccountRegisterView.as_view(), name="accountregister"),
     path("deleteaccount/<int:pk>/", views.DeleteAccountView.as_view(), name="deleteaccount"),
     path("editaccount/<int:pk>/", views.EditAccountView.as_view(), name="editaccount"),
     path("account/<int:pk>/", views.SelectAccountView.as_view(), name="account"),
-    # django user
-    path('signup/', views.SignupView.as_view(), name='signup'),
-    path('login/', views.LoginView.as_view(), name='login'),
-    path('logout/', views.LogoutView.as_view(), name='logout'),
-    path('resetpassword/', views.ResetPassword.as_view(), name='resetpassword'),
-    
     # transaction
     path("transactions/", views.TransactionsView.as_view(), name="transactions"),
     path("accounttransactions/<int:account_pk>/", views.AccountTransactionsView.as_view(), name="accounttransactions"),

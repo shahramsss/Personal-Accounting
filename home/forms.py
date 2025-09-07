@@ -8,7 +8,9 @@ from django.contrib.auth.models import User
 class AccountForm(forms.ModelForm):
     class Meta:
         model = Account
-        fields = "__all__"
+        fields = "__all__"  
+        exclude = ['user',]
+        
         labels = {
             "full_name": "نام و نام خانوادگی",
             "email": "ایمیل",

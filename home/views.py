@@ -28,7 +28,7 @@ class HomeView(View):
 class AccountsView(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("q", "")
-        accounts = Account.objects.all().order_by("-id")
+        accounts = Account.objects.filter(user = request.user).order_by("-id")
 
         if query:
             accounts = accounts.filter(
@@ -54,7 +54,9 @@ class AccountRegisterView(LoginRequiredMixin, View):
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
-            form.save()
+            account = form.save(commit=False)
+            account.user = request.user
+            account.save()
             messages.success(request, "حساب جدید ثبت شد.", "success")
             return redirect("home:accounts")
         return render(request, "home/account_register.html", {"form": form})
@@ -122,7 +124,7 @@ class SelectAccountView(LoginRequiredMixin, View):
 class TransactionsView(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("q", "")
-        transactions = Transaction.objects.all()
+        transactions = Transaction.objects.filter(account__user = request.user )
         if query:
             transactions = transactions.filter(description__icontains=query)
 
@@ -210,7 +212,7 @@ class DeleteTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk, pk):
         account = get_object_or_404(Account, id=account_pk)
         transaction = get_object_or_404(Transaction, id=pk)
-        if transaction.user == request.user and transaction.account == account:
+        if transaction.account.user == request.user and transaction.account == account:
             return render(
                 request,
                 "home/delete_confirm_transaction.html",
@@ -223,7 +225,7 @@ class DeleteTransactionsView(LoginRequiredMixin, View):
     def post(self, request, account_pk, pk):
         account = get_object_or_404(Account, id=account_pk)
         transaction = get_object_or_404(Transaction, id=pk)
-        if transaction.user == request.user and transaction.account == account:
+        if transaction.account.user == request.user and transaction.account == account:
             transaction.delete()
             messages.success(request, "تراکنش با موفقیت حذف شد.", "success")
         else:
@@ -267,18 +269,19 @@ class UpdateTransactionsView(LoginRequiredMixin, View):
 
 class SignupView(View):
     form_class = SignUpForm
+    template = "home/signup_user.html"
+    def get(self, request):
+        form = self.form_class()
+        return render(request, self.template, {"form": form})
 
     def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "شما با موفیت وارد شدید.", "success")
+            messages.success(request, "شما با موفقیت وارد شدید.", "success")
             return redirect("home:home")
-
-    def get(self, request):
-        form = self.form_class
-        return render(request, "home/signup_user.html", {"form": form})
+        return render(request, self.template, {"form": form})
 
 
 class LoginView(View):
@@ -316,53 +319,6 @@ class LogoutView(LoginRequiredMixin, View):
         return redirect("home:home")
 
 
-# class ResetPassword(LoginRequiredMixin, View):
-#     form_class = ResetPasswordForm
-
-#     def get(self, request):
-#         form = self.form_class()
-#         return render(request, "home/reset_password.html", {"form": form})
-
-#     def post(self, request):
-#         form = self.form_class(request.POST)
-#         if form.is_valid():
-#             cd = form.cleaned_data
-#             old_password = cd["old_password"]
-
-
-#             if not request.user.check_password(old_password):
-#                 messages.warning(request, "رمز عبور فعلی اشتباه است!", "warning")
-#                 return redirect("home:resetpassword")
-
-#             if old_password and old_password == request.user.password:
-#                 if len(cd["new_password"]) < 4:
-#                     messages.warning(
-#                         request, "رمز عبور جدید باید حداقل ۴ کاراکتر باشد!", "warning"
-#                     )
-#                     return redirect("home:resetpassword")
-
-#                 if (
-#                     cd["new_password"]
-#                     and cd["confirm_password"]
-#                     and cd["new_password"] != cd["confirm_password"]
-#                 ):
-#                     messages.warning(
-#                         request,
-#                         "رمز عبور و تکرار آن باید با هم یکسان باشند!",
-#                         "warning",
-#                     )
-#                     return redirect("home:resetpassword")
-
-#                 user = User.objects.get(username=request.user.username)
-#                 user.set_password(cd["new_password"])
-#                 user.save()
-#                 messages.success(
-#                     request, "رمز عبور شما با موفقیت تغییر یافت.", "success"
-#                 )
-#                 return redirect("home:home")
-#         return redirect("home:resetpassword")
-
-
 class ResetPassword(LoginRequiredMixin, View):
     form_class = ResetPasswordForm
 
@@ -383,11 +339,15 @@ class ResetPassword(LoginRequiredMixin, View):
                 return redirect("home:resetpassword")
 
             if len(new_password) < 4:
-                messages.warning(request, "رمز عبور جدید باید حداقل ۴ کاراکتر باشد!", "warning")
+                messages.warning(
+                    request, "رمز عبور جدید باید حداقل ۴ کاراکتر باشد!", "warning"
+                )
                 return redirect("home:resetpassword")
 
             if new_password != confirm_password:
-                messages.warning(request, "رمز عبور و تکرار آن باید با هم یکسان باشند!", "warning")
+                messages.warning(
+                    request, "رمز عبور و تکرار آن باید با هم یکسان باشند!", "warning"
+                )
                 return redirect("home:resetpassword")
 
             request.user.set_password(new_password)

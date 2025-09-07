@@ -6,6 +6,8 @@ class Account(models.Model):
     email = models.EmailField(null=True, blank=True)
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     address = models.CharField(max_length=512, null=True, blank=True)
+    user = models.ForeignKey(get_user_model() , on_delete=models.DO_NOTHING, related_name="transactions")
+
     
 
     def __str__(self):
@@ -19,7 +21,6 @@ class Transaction(models.Model):
         ("EX", "هزینه"),
     ]
 
-    user = models.ForeignKey(get_user_model() , on_delete=models.DO_NOTHING, related_name="transactions")
     account = models.ForeignKey(
         "Account", on_delete=models.PROTECT, related_name="transactions"
     )
