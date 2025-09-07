@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from .models import Account, Transaction
-from .forms import AccountForm, TransactionForm , SignUpForm
+from .forms import AccountForm, TransactionForm, SignUpForm, LoginForm
 from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.contrib.auth import authenticate
 
 
 class HomeView(View):
@@ -18,7 +19,7 @@ class HomeView(View):
         )
 
 
-class AccountsView(View):
+class AccountsView(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("q", "")
         accounts = Account.objects.all().order_by("-id")
@@ -37,7 +38,7 @@ class AccountsView(View):
         return render(request, "home/accounts.html", {"accounts": page_obj})
 
 
-class AccountRegisterView(View):
+class AccountRegisterView(LoginRequiredMixin, View):
     form_class = AccountForm
 
     def get(self, request):
@@ -53,7 +54,7 @@ class AccountRegisterView(View):
         return render(request, "home/account_register.html", {"form": form})
 
 
-class DeleteAccountView(View):
+class DeleteAccountView(LoginRequiredMixin, View):
     def get(self, request, pk):
         account = get_object_or_404(Account, pk=pk)
         transactions = Transaction.objects.filter(account=account)
@@ -75,7 +76,7 @@ class DeleteAccountView(View):
         return redirect("home:accounts")
 
 
-class EditAccountView(View):
+class EditAccountView(LoginRequiredMixin, View):
     def get(self, request, pk):
         account = get_object_or_404(Account, pk=pk)
         form = AccountForm(instance=account)
@@ -96,7 +97,7 @@ class EditAccountView(View):
         )
 
 
-class SelectAccountView(View):
+class SelectAccountView(LoginRequiredMixin, View):
     form_class = TransactionForm
 
     def get(self, request, pk):
@@ -112,7 +113,7 @@ class SelectAccountView(View):
         )
 
 
-class TransactionsView(View):
+class TransactionsView(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("q", "")
         transactions = Transaction.objects.all()
@@ -157,7 +158,7 @@ class AccountTransactionsView(LoginRequiredMixin, View):
         )
 
 
-class RegisterTransactionsView(View):
+class RegisterTransactionsView(LoginRequiredMixin, View):
     form_class = TransactionForm
 
     def get(self, request, account_pk, transaction_type):
@@ -199,10 +200,6 @@ class RegisterTransactionsView(View):
             return redirect("home:accounttransactions", account.id)
 
 
-class RetrieveTransactionsView(View):
-    pass
-
-
 class DeleteTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk, pk):
         account = get_object_or_404(Account, id=account_pk)
@@ -228,7 +225,7 @@ class DeleteTransactionsView(LoginRequiredMixin, View):
         return redirect("home:accounttransactions", account.id)
 
 
-class UpdateTransactionsView(View):
+class UpdateTransactionsView(LoginRequiredMixin ,View):
     form_class = TransactionForm
 
     def get(self, request, account_pk, pk):
@@ -262,16 +259,51 @@ class UpdateTransactionsView(View):
         return redirect("home:accounttransactions", account.id)
 
 
-
 class SignupView(View):
     form_class = SignUpForm
-    def post(self , request):
+
+    def post(self, request):
         form = self.form_class(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request , "شما با موفیت وارد شدید.", 'success')
-            return redirect('home:home') 
-    def get(self , request):
+            messages.success(request, "شما با موفیت وارد شدید.", "success")
+            return redirect("home:home")
+
+    def get(self, request):
         form = self.form_class
-        return render(request, 'home/signup_user.html', {'form': form})
+        return render(request, "home/signup_user.html", {"form": form})
+
+
+class LoginView(View):
+    form_class = LoginForm
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            messages.warning(request, "شما قبلا وارد شدید!", "warning")
+            return redirect("home:home")
+        form = self.form_class()
+        return render(request, "home/login_user.html", {"form": form})
+
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid() or request.user.is_authenticated:
+            cd = form.cleaned_data
+            username = cd["username"]
+            password = cd["password"]
+            user = authenticate(username=username, password=password)
+            if not user:
+                messages.warning(
+                    request, "نام کاربری یا رمز عبور اشتباه است!", "warning"
+                )
+                return redirect("home:login")
+            login(request, user)
+            messages.success(request, "شما با موفقیت وارد شدید.", "success")
+            return redirect("home:home")
+
+
+class LogoutView(LoginRequiredMixin ,View):
+    def get(self, request):
+        logout(request)
+        messages.success(request, "شما با موفقیت خارج شدید.", "success")
+        return redirect("home:home")

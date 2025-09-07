@@ -30,8 +30,8 @@ urlpatterns = [
     path("account/<int:pk>/", views.SelectAccountView.as_view(), name="account"),
     # django user
     path('signup/', views.SignupView.as_view(), name='signup'),
-    path('login/', auth_views.LoginView.as_view(template_name='home/login_user.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
     
     # transaction
     path("transactions/", views.TransactionsView.as_view(), name="transactions"),

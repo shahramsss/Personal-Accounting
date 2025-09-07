@@ -83,3 +83,20 @@ class SignUpForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'password1', 'password2']
+
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        label='نام کاربری',
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'نام کاربری را وارد کنید'
+        })
+    )
+    password = forms.CharField(
+        label='رمز عبور',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'رمز عبور را وارد کنید'
+        })
+    )
