@@ -225,7 +225,7 @@ class DeleteTransactionsView(LoginRequiredMixin, View):
         return redirect("home:accounttransactions", account.id)
 
 
-class UpdateTransactionsView(LoginRequiredMixin ,View):
+class UpdateTransactionsView(LoginRequiredMixin, View):
     form_class = TransactionForm
 
     def get(self, request, account_pk, pk):
@@ -280,29 +280,30 @@ class LoginView(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            messages.warning(request, "شما قبلا وارد شدید!", "warning")
+            messages.warning(request, "شما قبلاً وارد شده‌اید!")
             return redirect("home:home")
         form = self.form_class()
-        return render(request, "home/login_user.html", {"form": form})
+        next_url = request.GET.get("next", "")
+        return render(request, "home/login_user.html", {"form": form, "next": next_url})
 
     def post(self, request):
         form = self.form_class(request.POST)
-        if form.is_valid() or request.user.is_authenticated:
+        next_url = request.GET.get('next' , '') or request.POST.get('next','')
+        if form.is_valid():
             cd = form.cleaned_data
             username = cd["username"]
             password = cd["password"]
-            user = authenticate(username=username, password=password)
+            user = authenticate(request, username=username, password=password)
             if not user:
-                messages.warning(
-                    request, "نام کاربری یا رمز عبور اشتباه است!", "warning"
-                )
+                messages.warning(request, "نام کاربری یا رمز عبور اشتباه است!")
                 return redirect("home:login")
             login(request, user)
-            messages.success(request, "شما با موفقیت وارد شدید.", "success")
-            return redirect("home:home")
+            messages.success(request, "شما با موفقیت وارد شدید.")
+            return redirect(next_url or "home:home")
+        return render(request, "home/login_user.html", {"form": form, "next": next_url})
 
 
-class LogoutView(LoginRequiredMixin ,View):
+class LogoutView(LoginRequiredMixin, View):
     def get(self, request):
         logout(request)
         messages.success(request, "شما با موفقیت خارج شدید.", "success")
