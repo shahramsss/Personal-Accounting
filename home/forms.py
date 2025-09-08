@@ -134,23 +134,31 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 class CustomUserCreationForm(UserCreationForm):
+    username = forms.CharField(
+        label="نام کاربری",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'نام کاربری',
+            'dir': 'rtl'
+        })
+    )
+    password1 = forms.CharField(
+        label="رمز عبور",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'رمز عبور',
+            'dir': 'rtl'
+        })
+    )
+    password2 = forms.CharField(
+        label="تکرار رمز عبور",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'تکرار رمز عبور',
+            'dir': 'rtl'
+        })
+    )
     class Meta:
         model = User
         fields = ['username', 'password1', 'password2']
-        widgets = {
-            'username': forms.TextInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'نام کاربری',
-                'dir': 'rtl'
-            }),
-            'password1': forms.PasswordInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'رمز عبور',
-                'dir': 'rtl'
-            }),
-            'password2': forms.PasswordInput(attrs={
-                'class': 'form-control',
-                'placeholder': 'تکرار رمز عبور',
-                'dir': 'rtl'
-            }),
-        }
+        
