@@ -28,7 +28,7 @@ class HomeView(View):
 class AccountsView(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("q", "")
-        accounts = Account.objects.filter(user = request.user).order_by("-id")
+        accounts = Account.objects.filter(user=request.user).order_by("-id")
 
         if query:
             accounts = accounts.filter(
@@ -64,7 +64,7 @@ class AccountRegisterView(LoginRequiredMixin, View):
 
 class DeleteAccountView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        account = get_object_or_404(Account, pk=pk)
+        account = get_object_or_404(Account, user=request.user, pk=pk)
         transactions = Transaction.objects.filter(account=account)
         if transactions.exists():
             messages.warning(
@@ -79,21 +79,21 @@ class DeleteAccountView(LoginRequiredMixin, View):
         return render(request, "home/delete_confirm.html", {"account": account})
 
     def post(self, request, pk):
-        account = get_object_or_404(Account, pk=pk)
+        account = get_object_or_404(Account, user=request.user, pk=pk)
         account.delete()
         return redirect("home:accounts")
 
 
 class EditAccountView(LoginRequiredMixin, View):
     def get(self, request, pk):
-        account = get_object_or_404(Account, pk=pk)
+        account = get_object_or_404(Account, user=request.user, pk=pk)
         form = AccountForm(instance=account)
         return render(
             request, "home/edit_account.html", {"form": form, "account": account}
         )
 
     def post(self, request, pk):
-        account = get_object_or_404(Account, pk=pk)
+        account = get_object_or_404(Account, user=request.user, pk=pk)
         form = AccountForm(request.POST, instance=account)
         if form.is_valid():
             form.save()
@@ -109,7 +109,7 @@ class SelectAccountView(LoginRequiredMixin, View):
     form_class = TransactionForm
 
     def get(self, request, pk):
-        account = get_object_or_404(Account, id=pk)
+        account = get_object_or_404(Account, user=request.user, id=pk)
         form = self.form_class
         return render(
             request,
@@ -124,7 +124,7 @@ class SelectAccountView(LoginRequiredMixin, View):
 class TransactionsView(LoginRequiredMixin, View):
     def get(self, request):
         query = request.GET.get("q", "")
-        transactions = Transaction.objects.filter(account__user = request.user )
+        transactions = Transaction.objects.filter(account__user=request.user)
         if query:
             transactions = transactions.filter(description__icontains=query)
 
@@ -142,7 +142,7 @@ class TransactionsView(LoginRequiredMixin, View):
 
 class AccountTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk):
-        account = get_object_or_404(Account,user = request.user, id=account_pk)
+        account = get_object_or_404(Account, user=request.user, id=account_pk)
         transactions = account.transactions.all().order_by("-created_at")
         summary = transactions.aggregate(
             total_income=Sum("amount", filter=Q(type="RE")),
@@ -171,7 +171,7 @@ class RegisterTransactionsView(LoginRequiredMixin, View):
 
     def get(self, request, account_pk, transaction_type):
         form = self.form_class()
-        account = get_object_or_404(Account, pk=account_pk)
+        account = get_object_or_404(Account, user=request.user, pk=account_pk)
         print(account.full_name)
         if transaction_type == "re":
             transaction_type = "درآمد"
@@ -193,7 +193,7 @@ class RegisterTransactionsView(LoginRequiredMixin, View):
         form = self.form_class(request.POST)
         if form.is_valid():
             transaction = form.save(commit=False)
-            account = get_object_or_404(Account, id=account_pk)
+            account = get_object_or_404(Account, user=request.user, id=account_pk)
             transaction.user = request.user
             transaction.account = account
             if transaction_type == "re":
@@ -210,7 +210,7 @@ class RegisterTransactionsView(LoginRequiredMixin, View):
 
 class DeleteTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk, pk):
-        account = get_object_or_404(Account, id=account_pk)
+        account = get_object_or_404(Account, user=request.user, id=account_pk)
         transaction = get_object_or_404(Transaction, id=pk)
         if transaction.account.user == request.user and transaction.account == account:
             return render(
@@ -223,7 +223,7 @@ class DeleteTransactionsView(LoginRequiredMixin, View):
         return redirect("home:accounttransactions", account.id)
 
     def post(self, request, account_pk, pk):
-        account = get_object_or_404(Account, id=account_pk)
+        account = get_object_or_404(Account, user=request.user, id=account_pk)
         transaction = get_object_or_404(Transaction, id=pk)
         if transaction.account.user == request.user and transaction.account == account:
             transaction.delete()
@@ -237,39 +237,30 @@ class UpdateTransactionsView(LoginRequiredMixin, View):
     form_class = TransactionForm
 
     def get(self, request, account_pk, pk):
-        account = get_object_or_404(Account, id=account_pk)
+        account = get_object_or_404(Account, user=request.user, id=account_pk)
         transaction = get_object_or_404(Transaction, id=pk)
         form = self.form_class(instance=transaction)
-        if transaction.user == request.user and transaction.account == account:
-            return render(
-                request,
-                "home/update_transaction.html",
-                {"transaction": transaction, "account": account, "form": form},
-            )
-        else:
-            messages.warning(request, "این تراکنش مربوط به شما نمی باشد!", "warning")
-        return redirect("home:accounttransactions", account.id)
+        return render(
+            request,
+            "home/update_transaction.html",
+            {"transaction": transaction, "account": account, "form": form},
+        )
 
     def post(self, request, account_pk, pk):
-        account = get_object_or_404(Account, id=account_pk)
+        account = get_object_or_404(Account, user=request.user, id=account_pk)
         transaction = get_object_or_404(Transaction, id=pk)
         form = self.form_class(request.POST, instance=transaction)
-        if (
-            transaction.user == request.user
-            and transaction.account == account
-            and form.is_valid()
-        ):
+        if form.is_valid():
             form.save()
             messages.success(request, "تراکنش با موفقیت ویرایش شد.", "success")
-            return redirect("home:accounttransactions", account.id)
-        else:
-            messages.warning(request, "این تراکنش مربوط به شما نمی باشد!", "warning")
         return redirect("home:accounttransactions", account.id)
+       
 
 
 class SignupView(View):
     form_class = SignUpForm
     template = "home/signup_user.html"
+
     def get(self, request):
         form = self.form_class()
         return render(request, self.template, {"form": form})
