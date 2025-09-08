@@ -142,7 +142,7 @@ class TransactionsView(LoginRequiredMixin, View):
 
 class AccountTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk):
-        account = get_object_or_404(Account, id=account_pk)
+        account = get_object_or_404(Account,user = request.user, id=account_pk)
         transactions = account.transactions.all().order_by("-created_at")
         summary = transactions.aggregate(
             total_income=Sum("amount", filter=Q(type="RE")),
