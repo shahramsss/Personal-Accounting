@@ -7,6 +7,7 @@ from .forms import (
     SignUpForm,
     LoginForm,
     ResetPasswordForm,
+    CustomUserCreationForm,
 )
 from django.contrib import messages
 from django.db.models import Q
@@ -14,7 +15,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import User
+
 
 
 class HomeView(View):
@@ -97,7 +98,7 @@ class EditAccountView(LoginRequiredMixin, View):
         form = AccountForm(request.POST, instance=account)
         if form.is_valid():
             form.save()
-            messages.warning(request, "حساب با موفقیت ویرایش شد.", "warning")
+            messages.success(request, "حساب با موفقیت ویرایش شد.", "success")
             return redirect("home:accounts")
         # یا هر صفحه‌ای که لیست حساب‌ها رو نشون می‌ده
         return render(
@@ -254,11 +255,10 @@ class UpdateTransactionsView(LoginRequiredMixin, View):
             form.save()
             messages.success(request, "تراکنش با موفقیت ویرایش شد.", "success")
         return redirect("home:accounttransactions", account.id)
-       
 
 
 class SignupView(View):
-    form_class = SignUpForm
+    form_class = CustomUserCreationForm
     template = "home/signup_user.html"
 
     def get(self, request):

@@ -127,3 +127,30 @@ class ResetPasswordForm(forms.Form):
             }
         ),
     )
+
+
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+class CustomUserCreationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'نام کاربری',
+                'dir': 'rtl'
+            }),
+            'password1': forms.PasswordInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'رمز عبور',
+                'dir': 'rtl'
+            }),
+            'password2': forms.PasswordInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'تکرار رمز عبور',
+                'dir': 'rtl'
+            }),
+        }
