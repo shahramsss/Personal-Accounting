@@ -259,13 +259,13 @@ class UpdateTransactionsView(LoginRequiredMixin, View):
         greg_date = transaction.date
         jalali_date = JalaliDate(greg_date)
         formatted = f"{jalali_date.year}/{jalali_date.month:02}/{jalali_date.day:02}"
+       
         initial_data = {
             "date": formatted,
             "amount": transaction.amount,
             "description": transaction.description,
+        
         }
-
-        # form = self.form_class(instance=transaction)
         form = self.form_class(initial=initial_data)
         return render(
             request,
@@ -280,6 +280,13 @@ class UpdateTransactionsView(LoginRequiredMixin, View):
         if form.is_valid():
             form.save()
             messages.success(request, "تراکنش با موفقیت ویرایش شد.", "success")
+        else:
+        # اگر فرم اشتباه بود، دوباره فرم رو با خطاها نمایش بده
+            return render(request, "home/update_transaction.html", {
+                "form": form,
+                "transaction": transaction,
+                "account": account,
+            })
         return redirect("home:accounttransactions", account.id)
 
 
