@@ -4,7 +4,6 @@ from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from khayyam import JalaliDate
-from datetime import date
 from .validators import validate_custom_date_format
 
 

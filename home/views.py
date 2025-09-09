@@ -15,6 +15,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from django.contrib.auth import login, logout, authenticate
+from khayyam import JalaliDate
 
 
 class HomeView(View):
@@ -254,7 +255,18 @@ class UpdateTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk, pk):
         account = get_object_or_404(Account, user=request.user, id=account_pk)
         transaction = get_object_or_404(Transaction, id=pk)
-        form = self.form_class(instance=transaction)
+
+        greg_date = transaction.date
+        jalali_date = JalaliDate(greg_date)
+        formatted = f"{jalali_date.year}/{jalali_date.month:02}/{jalali_date.day:02}"
+        initial_data = {
+            "date": formatted,
+            "amount": transaction.amount,
+            "description": transaction.description,
+        }
+
+        # form = self.form_class(instance=transaction)
+        form = self.form_class(initial=initial_data)
         return render(
             request,
             "home/update_transaction.html",
