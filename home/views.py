@@ -17,7 +17,6 @@ from django.db.models import Sum
 from django.contrib.auth import login, logout, authenticate
 
 
-
 class HomeView(View):
     def get(self, request):
         return render(
@@ -173,7 +172,7 @@ class RegisterTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk, transaction_type):
         form = self.form_class()
         account = get_object_or_404(Account, user=request.user, pk=account_pk)
-        print(account.full_name)
+
         if transaction_type == "re":
             transaction_type = "درآمد"
 
@@ -192,9 +191,10 @@ class RegisterTransactionsView(LoginRequiredMixin, View):
 
     def post(self, request, account_pk, transaction_type):
         form = self.form_class(request.POST)
+        account = get_object_or_404(Account, user=request.user, id=account_pk)
+
         if form.is_valid():
             transaction = form.save(commit=False)
-            account = get_object_or_404(Account, user=request.user, id=account_pk)
             transaction.user = request.user
             transaction.account = account
             if transaction_type == "re":
@@ -207,6 +207,20 @@ class RegisterTransactionsView(LoginRequiredMixin, View):
             messages.success(request, "تراکنش با موفقیت ثب شد.", "success")
             transaction.save()
             return redirect("home:accounttransactions", account.id)
+        if transaction_type == "re":
+            transaction_type = "درآمد"
+
+        if transaction_type == "ex":
+            transaction_type = "هزینه"
+        return render(
+            request,
+            "home/register_transaction.html",
+            {
+                "form": form,
+                "account": account,
+                "transaction_type": transaction_type,
+            },
+        )
 
 
 class DeleteTransactionsView(LoginRequiredMixin, View):
