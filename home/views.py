@@ -144,7 +144,7 @@ class TransactionsView(LoginRequiredMixin, View):
 class AccountTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk):
         account = get_object_or_404(Account, user=request.user, id=account_pk)
-        transactions = account.transactions.all().order_by("-created_at")
+        transactions = account.transactions.all().order_by("-created_at" )
         summary = transactions.aggregate(
             total_income=Sum("amount", filter=Q(type="RE")),
             total_expense=Sum("amount", filter=Q(type="EX")),
@@ -157,7 +157,20 @@ class AccountTransactionsView(LoginRequiredMixin, View):
         if summary < 0:
             summary = summary
 
-        paginator = Paginator(transactions, 20)  # ۲۰ تراکنش در هر صفحه
+        # balance
+        balance = 0
+        transaction_list = []
+
+        for txn in transactions:
+            if txn.type =="RE":
+                balance += txn.amount
+            else:
+                balance -= txn.amount  # فرض می‌کنیم مقدار تراکنش (+ یا -) توی فیلد amount هست
+            txn.balance = balance  # یه فیلد موقت به شیء اضافه می‌کنیم
+            transaction_list.append(txn)
+
+        #  paginator
+        paginator = Paginator(transaction_list, 20)  # ۲۰ تراکنش در هر صفحه
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
         return render(
@@ -254,7 +267,7 @@ class UpdateTransactionsView(LoginRequiredMixin, View):
 
     def get(self, request, account_pk, pk):
         account = get_object_or_404(Account, user=request.user, id=account_pk)
-        transaction = get_object_or_404(Transaction, id=pk)
+        transaction = get_object_or_404(Transaction, account=account ,id=pk)
 
         greg_date = transaction.date
         jalali_date = JalaliDate(greg_date)
