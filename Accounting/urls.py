@@ -23,10 +23,9 @@ from django.conf.urls import handler404
 from django.shortcuts import render
 
 
-
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("home.urls")),
+    path("", include("home.urls", namespace="home")),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

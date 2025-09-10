@@ -49,7 +49,7 @@ class AccountRegisterView(LoginRequiredMixin, View):
     form_class = AccountForm
 
     def get(self, request):
-        form = self.form_class
+        form = self.form_class()
         return render(request, "home/account_register.html", {"form": form})
 
     def post(self, request):

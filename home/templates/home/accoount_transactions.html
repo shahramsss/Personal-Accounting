@@ -6,8 +6,8 @@
 
 {% block content %}
 <p class="my-3 h4">📊 لیست تراکنش‌های جناب: <span> {{ account.full_name }}</span></p>
-<a href="{% url 'home:registertransaction' account.id 're' %}" class="btn btn-success my-3">درآمد</a>
-<a href="{% url 'home:registertransaction' account.id 'ex' %}" class="btn btn-warning my-3">هزینه</a>
+<a href="{% url 'home:transaction_register' account.id 're' %}" class="btn btn-success my-3">درآمد</a>
+<a href="{% url 'home:transaction_register' account.id 'ex' %}" class="btn btn-warning my-3">هزینه</a>
 {% if transactions %}
 <table class="table table-bordered table-striped table_hovere fs-5">
   <thead class="table-dark">

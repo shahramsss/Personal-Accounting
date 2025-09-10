@@ -46,45 +46,6 @@ class AccountForm(forms.ModelForm):
             ),
         }
 
-    # class TransactionForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["date"].initial = timezone.now().date()
-
-    class Meta:
-        model = Transaction
-        fields = ["amount", "type", "date", "description"]
-        labels = {
-            "amount": "مبلغ",
-            "type": "نوع تراکنش",
-            "date": "تاریخ",
-            "description": "توضیحات",
-        }
-        exclude = [
-            "type",
-        ]
-        widgets = {
-            "amount": forms.NumberInput(
-                attrs={
-                    "class": "form-control",
-                    "placeholder": "مبلغ را وارد کنید",
-                    "dir": "rtl",
-                }
-            ),
-            "type": forms.Select(attrs={"class": "form-select", "dir": "rtl"}),
-            "date": forms.DateInput(
-                attrs={"class": "form-control", "type": "date", "dir": "rtl"}
-            ),
-            "description": forms.Textarea(
-                attrs={
-                    "class": "form-control",
-                    "rows": 3,
-                    "placeholder": "توضیحات تراکنش",
-                    "dir": "rtl",
-                }
-            ),
-        }
-
 
 class TransactionForm(forms.ModelForm):
     now = timezone.now().date()
@@ -118,7 +79,7 @@ class TransactionForm(forms.ModelForm):
             year, month, day = map(int, parts)
             jalali_date = JalaliDate(year, month, day)
             gregorian_date = jalali_date.todate()
-            print('*'*90)
+            print("*" * 90)
             print(gregorian_date)
             return gregorian_date
         except ValueError:

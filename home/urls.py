@@ -30,14 +30,14 @@ urlpatterns = [
     # views
     path("home/", views.HomeView.as_view(), name="home"),
     path("accounts/", views.AccountsView.as_view(), name="accounts"),
-    path("accountregister/", views.AccountRegisterView.as_view(), name="accountregister"),
+    path("accountregister/", views.AccountRegisterView.as_view(), name="account_register"),
     path("deleteaccount/<int:pk>/", views.DeleteAccountView.as_view(), name="deleteaccount"),
     path("editaccount/<int:pk>/", views.EditAccountView.as_view(), name="editaccount"),
     path("account/<int:pk>/", views.SelectAccountView.as_view(), name="account"),
     # transaction
     path("transactions/", views.TransactionsView.as_view(), name="transactions"),
     path("accounttransactions/<int:account_pk>/", views.AccountTransactionsView.as_view(), name="accounttransactions"),
-    path("registertransaction/<int:account_pk>/<str:transaction_type>/", views.RegisterTransactionsView.as_view(), name="registertransaction"),
+    path("registertransaction/<int:account_pk>/<str:transaction_type>/", views.RegisterTransactionsView.as_view(), name="transaction_register"),
     path("deletetransaction/<int:account_pk>/<int:pk>/", views.DeleteTransactionsView.as_view(), name="deletetransaction"),
     path("updatetransaction/<int:account_pk>/<int:pk>/", views.UpdateTransactionsView.as_view(), name="updatetransaction"),
 
