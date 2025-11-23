@@ -188,10 +188,10 @@ class RegisterTransactionsView(LoginRequiredMixin, View):
         account = get_object_or_404(Account, user=request.user, pk=account_pk)
 
         if transaction_type == "re":
-            transaction_type = "درآمد"
+            transaction_type = "دریافت"
 
         if transaction_type == "ex":
-            transaction_type = "هزینه"
+            transaction_type = "پرداخت"
 
         return render(
             request,
@@ -222,10 +222,10 @@ class RegisterTransactionsView(LoginRequiredMixin, View):
             transaction.save()
             return redirect("home:accounttransactions", account.id)
         if transaction_type == "re":
-            transaction_type = "درآمد"
+            transaction_type = "دریافت"
 
         if transaction_type == "ex":
-            transaction_type = "هزینه"
+            transaction_type = "پرداخت"
         return render(
             request,
             "home/register_transaction.html",

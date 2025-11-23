@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             name='Transaction',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('type', models.CharField(choices=[('RE', 'درآمد'), ('EX', 'هزینه')], max_length=2)),
+                ('type', models.CharField(choices=[('RE', 'دریافت'), ('EX', 'پرداخت')], max_length=2)),
                 ('amount', models.DecimalField(decimal_places=2, max_digits=15)),
                 ('category', models.CharField(max_length=100)),
                 ('description', models.TextField(blank=True, null=True)),

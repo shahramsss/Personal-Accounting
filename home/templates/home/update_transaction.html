@@ -8,11 +8,11 @@
     <p class="h5 my-2"> شماره تراکنش : {{ transaction.id }}</p>
      {% if  transaction.type == 'RE' %}
     <p class="my-2">نوع تراکنش:
-      <span class="bg-success text-white p-1 rounded h5">درآمد</span>
+      <span class="bg-success text-white p-1 rounded ">دریافت</span>
     </p>
   {% else %}
     <p class="my-2">نوع تراکنش:
-      <span class="bg-warning text-dark p-1 rounded ">هزینه</span>
+      <span class="bg-warning text-dark p-1 rounded ">پرداخت</span>
     </p>
   {% endif %}
 

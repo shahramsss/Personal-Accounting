@@ -17,8 +17,8 @@ class Account(models.Model):
 
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
-        ("RE", "درآمد"),
-        ("EX", "هزینه"),
+        ("RE", "دریافت"),
+        ("EX", "پرداخت"),
     ]
 
     account = models.ForeignKey(
@@ -26,7 +26,7 @@ class Transaction(models.Model):
     )
     type = models.CharField(max_length=2, choices=TRANSACTION_TYPES)
     amount = models.DecimalField(max_digits=15, decimal_places=0)
-    category = models.CharField(max_length=100)  # منبع درآمد یا دسته‌بندی هزینه
+    category = models.CharField(max_length=100)  
     description = models.TextField(blank=True, null=True)
     date = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
