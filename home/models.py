@@ -34,6 +34,15 @@ class Transaction(models.Model):
     def __str__(self):
         sign = "+" if self.type == "RE" else "-"
         return f"{self.account.user} | {self.account} | {sign}  {self.amount}"
+    
+    # @property
+    # def balance(self):
+    #     # جمع دریافتی‌ها
+    #     received = self.transactions.filter(type="RE").aggregate(models.Sum("amount"))["amount__sum"] or 0
+    #     # جمع پرداختی‌ها
+    #     paid = self.transactions.filter(type="EX").aggregate(models.Sum("amount"))["amount__sum"] or 0
+    #     # موجودی = دریافتی - پرداختی
+    #     return received - paid
 
 
 # class Product(models.Model):

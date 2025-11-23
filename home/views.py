@@ -144,39 +144,46 @@ class TransactionsView(LoginRequiredMixin, View):
 class AccountTransactionsView(LoginRequiredMixin, View):
     def get(self, request, account_pk):
         account = get_object_or_404(Account, user=request.user, id=account_pk)
-        transactions = account.transactions.all().order_by("-created_at" )
+        transactions = account.transactions.all().order_by("-created_at")
         summary = transactions.aggregate(
             total_income=Sum("amount", filter=Q(type="RE")),
             total_expense=Sum("amount", filter=Q(type="EX")),
         )
-        if summary["total_income"] == None:
+
+        if summary["total_income"] is None:
             summary["total_income"] = 0
-        if summary["total_expense"] == None:
+        if summary["total_expense"] is None:
             summary["total_expense"] = 0
-        summary = summary["total_income"] - summary["total_expense"]
-        if summary < 0:
-            summary = summary
+
+        # محاسبه جمع کل در متغیر جدا
+        net_summary = summary["total_income"] - summary["total_expense"]
 
         # balance
         balance = 0
         transaction_list = []
-
         for txn in transactions:
-            if txn.type =="RE":
+            if txn.type == "RE":
                 balance += txn.amount
             else:
-                balance -= txn.amount  # فرض می‌کنیم مقدار تراکنش (+ یا -) توی فیلد amount هست
-            txn.balance = balance  # یه فیلد موقت به شیء اضافه می‌کنیم
+                balance -= txn.amount
+            txn.balance = balance
             transaction_list.append(txn)
 
-        #  paginator
-        paginator = Paginator(transaction_list, 20)  # ۲۰ تراکنش در هر صفحه
+        # paginator
+        paginator = Paginator(transaction_list, 20)
         page_number = request.GET.get("page")
         page_obj = paginator.get_page(page_number)
+
         return render(
             request,
             "home/accoount_transactions.html",
-            {"transactions": page_obj, "account": account, "summary": summary},
+            {
+                "transactions": page_obj,
+                "account": account,
+                "summary": net_summary,  # اینجا عدد خالص
+                "total_income": summary["total_income"],  # اینجا دیکشنری اصلی
+                "total_expense": summary["total_expense"],
+            },
         )
 
 
@@ -218,7 +225,7 @@ class RegisterTransactionsView(LoginRequiredMixin, View):
             else:
                 messages.warning(request, "نوع تراکنش مشخص نیست!", "warning")
                 return redirect("home:transactions")
-            messages.success(request, "تراکنش با موفقیت ثب شد.", "success")
+            messages.success(request, "تراکنش با موفقیت ثبت شد.", "success")
             transaction.save()
             return redirect("home:accounttransactions", account.id)
         if transaction_type == "re":
@@ -267,17 +274,16 @@ class UpdateTransactionsView(LoginRequiredMixin, View):
 
     def get(self, request, account_pk, pk):
         account = get_object_or_404(Account, user=request.user, id=account_pk)
-        transaction = get_object_or_404(Transaction, account=account ,id=pk)
+        transaction = get_object_or_404(Transaction, account=account, id=pk)
 
         greg_date = transaction.date
         jalali_date = JalaliDate(greg_date)
         formatted = f"{jalali_date.year}/{jalali_date.month:02}/{jalali_date.day:02}"
-       
+
         initial_data = {
             "date": formatted,
             "amount": transaction.amount,
             "description": transaction.description,
-        
         }
         form = self.form_class(initial=initial_data)
         return render(
@@ -294,12 +300,16 @@ class UpdateTransactionsView(LoginRequiredMixin, View):
             form.save()
             messages.success(request, "تراکنش با موفقیت ویرایش شد.", "success")
         else:
-        # اگر فرم اشتباه بود، دوباره فرم رو با خطاها نمایش بده
-            return render(request, "home/update_transaction.html", {
-                "form": form,
-                "transaction": transaction,
-                "account": account,
-            })
+            # اگر فرم اشتباه بود، دوباره فرم رو با خطاها نمایش بده
+            return render(
+                request,
+                "home/update_transaction.html",
+                {
+                    "form": form,
+                    "transaction": transaction,
+                    "account": account,
+                },
+            )
         return redirect("home:accounttransactions", account.id)
 
 
