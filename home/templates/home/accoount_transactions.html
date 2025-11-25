@@ -5,46 +5,41 @@
 {% load fa_numbers %}
 
 {% block content %}
-  <div class="container py-3">
-    <div class="row g-3">
-      <!-- پرداختی -->
-      <div class="col-12 col-md-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h6 class="mt-2">کل پرداختی</h6>
-            <p class="fw-bold">{{total_expense}}</p>
-          </div>
+<div class="container py-3">
+  <div class="row g-3">
+    <!-- پرداختی -->
+    <div class="col-12 col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h6 class="mt-2">کل پرداختی</h6>
+          <p class="fw-bold">{{total_expense}}</p>
         </div>
       </div>
-      <!-- دریافتی -->
-      <div class="col-12 col-md-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h6 class="mt-2">کل دریافتی</h6>
-            <p class="fw-bold">{{total_income}}</p>
-          </div>
+    </div>
+    <!-- دریافتی -->
+    <div class="col-12 col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h6 class="mt-2">کل دریافتی</h6>
+          <p class="fw-bold">{{total_income}}</p>
         </div>
       </div>
-      <!-- مانده حساب -->
-      <div class="col-12 col-md-4">
-        <div class="card text-center">
-          <div class="card-body">
-            <h6 class="mt-2">مانده حساب</h6>
-            <p class="fw-bold">
-               {% if summary < 0 %} 
-                {{ summary|intcomma|fa_digits }}
-       
-               {%else %}
-              {{ summary|intcomma|fa_digits }} </td>
-
+    </div>
+    <!-- مانده حساب -->
+    <div class="col-12 col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h6 class="mt-2">مانده حساب</h6>
+          <p class="fw-bold " dir="ltr" >
+            {% if summary < 0 %} {{ summary|intcomma|fa_digits }} {%else %} {{ summary|intcomma|fa_digits }} 
               {% endif %}
 
-            </p>
-          </div>
+          </p>
         </div>
       </div>
     </div>
   </div>
+</div>
 <p class="my-3 h4">📊 لیست تراکنش‌های جناب: <span> {{ account.full_name }}</span></p>
 <a href="{% url 'home:transaction_register' account.id 're' %}" class="btn btn-success my-3">ثبت دریافت</a>
 <a href="{% url 'home:transaction_register' account.id 'ex' %}" class="btn btn-warning my-3">ثبت پرداخت</a>
@@ -66,38 +61,14 @@
     <tr>
       <td>{{ transaction.id }}</td>
       <td class="{% if transaction.type == 'RE' %}
-                
-                
-                
             text-dark
-
-
-
               {% else %}
-                
-                
-                
             text-danger
-
-
-
               {% endif %}">{{ transaction.get_type_display }}</td>
       <td class="{% if transaction.type == 'RE' %}
-                
-                
-                
             text-dark
-
-
-
               {% else %}
-                
-                
-                
             text-danger
-
-
-
               {% endif %}">
         {{ transaction.amount|intcomma|fa_digits }}
         {% if transaction.type == 'RE' %}
@@ -108,7 +79,7 @@
       </td>
       <td>{{ transaction.date|jalali|fa_digits }}</td>
       <td>{{ transaction.description|default:'-' }}</td>
-      <td>{{ transaction.balance|default:'-' }}</td>
+      <td dir="ltr" class="text-end">{{ transaction.balance|default:'-' }}</td>
 
       <td>
         <a class="btn btn-sm btn-warning" href="{% url 'home:updatetransaction' account.id transaction.id %}">

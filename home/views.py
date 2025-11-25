@@ -168,6 +168,7 @@ class AccountTransactionsView(LoginRequiredMixin, View):
                 balance -= txn.amount
             txn.balance = balance
             transaction_list.append(txn)
+            print(balance)
 
         # paginator
         paginator = Paginator(transaction_list, 20)
